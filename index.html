@@ -11,4 +11,405 @@
     
     /* Login & Modal Cards */
     .card { background: #111827; border: 1px solid #1f2937; border-radius: 18px; width: 100%; max-width: 400px; padding: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); text-align: center; }
-    h2 { font-size: 19px; color: #38bdf8; font-weight: 70
+    h2 { font-size: 19px; color: #38bdf8; font-weight: 700; margin-bottom: 6px; }
+    p.subtext { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    
+    .input-group { position: relative; width: 100%; margin-bottom: 14px; }
+    input[type="password"], input[type="text"] { width: 100%; padding: 14px 44px 14px 16px; border-radius: 10px; border: 1px solid #374151; background: #030712; color: #fff; font-size: 15px; outline: none; }
+    input:focus { border-color: #38bdf8; }
+    .eye-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
+
+    button { width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
+    button:active { opacity: 0.9; }
+    .btn-secondary { background: #1f2937; border: 1px solid #374151; font-size: 12px; padding: 8px 12px; border-radius: 8px; color: #cbd5e1; }
+    .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; }
+    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; font-weight: 600; }
+    
+    /* Animation Overlay */
+    #welcomeOverlay { display: none; position: fixed; inset: 0; background: #030712; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
+    .welcome-text { font-size: 28px; font-weight: 800; background: linear-gradient(120deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; animation: glowPulse 1.8s infinite; }
+    .welcome-sub { margin-top: 10px; color: #94a3b8; font-size: 14px; letter-spacing: 2px; }
+
+    @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6)); } 50% { filter: drop-shadow(0 0 25px rgba(129, 140, 248, 0.9)); } }
+
+    /* Vault View */
+    #vaultView { display: none; width: 100%; max-width: 500px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .header-actions { display: flex; gap: 8px; }
+
+    .sync-bar { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 10px; margin-bottom: 16px; display: flex; gap: 8px; }
+    .sync-bar button { padding: 8px; font-size: 12px; }
+
+    .upload-card { background: #111827; border: 1px dashed #38bdf8; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    input[type="file"] { display: none; }
+    .file-btn { display: inline-block; width: 100%; padding: 12px; background: #0284c7; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; color: #fff; }
+    #uploadStatus { font-size: 13px; margin-top: 10px; color: #38bdf8; }
+
+    /* Gallery Grid */
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .media-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #1f2937; border: 1px solid #374151; }
+    .media-item img { width: 100%; height: 100%; object-fit: cover; }
+    .delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* Modals */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Welcome Animation -->
+  <div id="welcomeOverlay">
+    <div class="welcome-text">Welcome Madhav Kadam</div>
+    <div class="welcome-sub">Opening Private Studio...</div>
+  </div>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div class="card" id="loginBox">
+    <h2>Welcome Madhav Kadam to Private Studio</h2>
+    <p class="subtext">Enter secret password to access vault</p>
+    
+    <form onsubmit="event.preventDefault(); unlockStudio();">
+      <div class="input-group">
+        <input type="password" id="passInput" placeholder="Enter Secret Password">
+        <span class="eye-toggle" onclick="toggleEye('passInput')">👁️</span>
+      </div>
+      <button type="submit">Unlock Studio</button>
+      <button type="button" class="link-btn" onclick="openForgotModal()">Forgot Password?</button>
+    </form>
+    <p id="loginError" class="msg-box"></p>
+  </div>
+
+  <!-- 2. CHANGE PASSWORD MODAL -->
+  <div class="modal-backdrop" id="changePassModal">
+    <div class="card">
+      <h2>🔑 Change Password</h2>
+      <p class="subtext">Set your new custom password</p>
+      
+      <div class="input-group">
+        <input type="password" id="oldPassInput" placeholder="Current Password">
+        <span class="eye-toggle" onclick="toggleEye('oldPassInput')">👁️</span>
+      </div>
+      <div class="input-group">
+        <input type="password" id="newPassInput" placeholder="New Password">
+        <span class="eye-toggle" onclick="toggleEye('newPassInput')">👁️</span>
+      </div>
+      <div class="input-group">
+        <input type="password" id="confirmPassInput" placeholder="Confirm New Password">
+        <span class="eye-toggle" onclick="toggleEye('confirmPassInput')">👁️</span>
+      </div>
+      
+      <button type="button" onclick="saveNewPassword()">Save New Password</button>
+      <button type="button" class="btn-secondary" style="width: 100%; margin-top: 8px;" onclick="closeChangePassModal()">Cancel</button>
+      <p id="changePassMsg" class="msg-box"></p>
+    </div>
+  </div>
+
+  <!-- 3. FORGOT PASSWORD MODAL -->
+  <div class="modal-backdrop" id="forgotModal">
+    <div class="card">
+      <h2>🔑 Reset Password</h2>
+      <p class="subtext">Master Code: <strong>MADHAV-RESET</strong></p>
+      
+      <div class="input-group">
+        <input type="text" id="masterCodeInput" placeholder="Enter Master Code">
+      </div>
+      <div class="input-group">
+        <input type="password" id="resetNewPass" placeholder="Enter New Password">
+        <span class="eye-toggle" onclick="toggleEye('resetNewPass')">👁️</span>
+      </div>
+      
+      <button type="button" onclick="handleMasterReset()">Reset Password</button>
+      <button type="button" class="link-btn" onclick="closeForgotModal()">Back to Login</button>
+      <p id="forgotMsg" class="msg-box"></p>
+    </div>
+  </div>
+
+  <!-- 4. MAIN VAULT VIEW -->
+  <div id="vaultView">
+    <div class="header-bar">
+      <div>
+        <h3 style="color: #38bdf8; font-size: 18px;">Madhav's Studio</h3>
+        <p style="font-size: 12px; color: #94a3b8;" id="statsText">0 Photos Synced</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-secondary" onclick="openChangePassModal()">🔑 Change Password</button>
+        <button type="button" class="btn-secondary" onclick="lockStudio()">Lock</button>
+      </div>
+    </div>
+
+    <!-- Multi-Device Sync Options (Password-Protected Backup) -->
+    <div class="sync-bar">
+      <button type="button" class="btn-secondary" onclick="exportPasswordProtectedBackup()">🔒 Save Encrypted Backup</button>
+      <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📤 Load Photos Here</button>
+      <input type="file" id="importFile" accept=".vault,.json" style="display:none;" onchange="importPasswordProtectedBackup(event)">
+    </div>
+
+    <!-- Upload Card -->
+    <div class="upload-card">
+      <label class="file-btn" for="photoChooser">📷 Select Photo from Phone</label>
+      <input type="file" id="photoChooser" accept="image/*" onchange="uploadPhotoToImgBB()">
+      <div id="uploadStatus">Upload to ImgBB Cloud Storage</div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" id="photoContainer"></div>
+  </div>
+
+  <script>
+    const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
+    const MASTER_RECOVERY_KEY = "MADHAV-RESET";
+    
+    // Default initial password
+    let currentPassword = localStorage.getItem("madhav_user_pass") || "madhav";
+    let myMedia = JSON.parse(localStorage.getItem("madhav_imgbb_vault") || "[]");
+
+    function toggleEye(id) {
+      const f = document.getElementById(id);
+      f.type = (f.type === "password") ? "text" : "password";
+    }
+
+    // Login Unlock
+    function unlockStudio() {
+      const val = document.getElementById("passInput").value.trim();
+      const err = document.getElementById("loginError");
+
+      if (val === currentPassword) {
+        err.style.display = "none";
+        document.getElementById("loginBox").style.display = "none";
+        
+        const anim = document.getElementById("welcomeOverlay");
+        anim.style.display = "flex";
+        
+        setTimeout(() => {
+          anim.style.display = "none";
+          document.getElementById("vaultView").style.display = "block";
+          renderVault();
+        }, 1200);
+      } else {
+        err.innerText = "Incorrect Password! Please try again.";
+        err.style.display = "block";
+      }
+    }
+
+    function lockStudio() {
+      document.getElementById("vaultView").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("passInput").value = "";
+    }
+
+    // Change Password Functions
+    function openChangePassModal() {
+      document.getElementById("changePassModal").style.display = "flex";
+      document.getElementById("oldPassInput").value = "";
+      document.getElementById("newPassInput").value = "";
+      document.getElementById("confirmPassInput").value = "";
+      document.getElementById("changePassMsg").style.display = "none";
+    }
+
+    function closeChangePassModal() {
+      document.getElementById("changePassModal").style.display = "none";
+    }
+
+    function saveNewPassword() {
+      const oldP = document.getElementById("oldPassInput").value.trim();
+      const newP = document.getElementById("newPassInput").value.trim();
+      const confP = document.getElementById("confirmPassInput").value.trim();
+      const msg = document.getElementById("changePassMsg");
+
+      if (oldP !== currentPassword) {
+        msg.innerText = "Current password is incorrect!";
+        msg.style.display = "block";
+        return;
+      }
+      if (!newP) {
+        msg.innerText = "Please enter a new password!";
+        msg.style.display = "block";
+        return;
+      }
+      if (newP !== confP) {
+        msg.innerText = "New passwords do not match!";
+        msg.style.display = "block";
+        return;
+      }
+
+      currentPassword = newP;
+      localStorage.setItem("madhav_user_pass", newP);
+      alert("Password changed successfully!");
+      closeChangePassModal();
+    }
+
+    // Forgot Password Functions
+    function openForgotModal() {
+      document.getElementById("forgotModal").style.display = "flex";
+      document.getElementById("masterCodeInput").value = "";
+      document.getElementById("resetNewPass").value = "";
+      document.getElementById("forgotMsg").style.display = "none";
+    }
+
+    function closeForgotModal() {
+      document.getElementById("forgotModal").style.display = "none";
+    }
+
+    function handleMasterReset() {
+      const code = document.getElementById("masterCodeInput").value.trim();
+      const newP = document.getElementById("resetNewPass").value.trim();
+      const msg = document.getElementById("forgotMsg");
+
+      if (code !== MASTER_RECOVERY_KEY) {
+        msg.innerText = "Invalid Master Code!";
+        msg.style.display = "block";
+        return;
+      }
+      if (!newP) {
+        msg.innerText = "Please enter a new password!";
+        msg.style.display = "block";
+        return;
+      }
+
+      currentPassword = newP;
+      localStorage.setItem("madhav_user_pass", newP);
+      alert("Password reset successfully! Please login with your new password.");
+      closeForgotModal();
+    }
+
+    // Direct Upload to ImgBB Cloud
+    async function uploadPhotoToImgBB() {
+      const input = document.getElementById("photoChooser");
+      const status = document.getElementById("uploadStatus");
+      const file = input.files[0];
+      if (!file) return;
+
+      status.innerText = "Uploading to ImgBB cloud...";
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          status.innerText = "Uploaded successfully!";
+          myMedia.unshift({ id: Date.now(), url: data.data.url });
+          localStorage.setItem("madhav_imgbb_vault", JSON.stringify(myMedia));
+          renderVault();
+          setTimeout(() => { status.innerText = "Upload to ImgBB Cloud Storage"; }, 2000);
+        } else {
+          status.innerText = "Upload error: " + data.error.message;
+        }
+      } catch (err) {
+        status.innerText = "Network error. Please try again.";
+      }
+      input.value = "";
+    }
+
+    function renderVault() {
+      const cont = document.getElementById("photoContainer");
+      document.getElementById("statsText").innerText = myMedia.length + " Photos Synced";
+      cont.innerHTML = "";
+
+      if (myMedia.length === 0) {
+        cont.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b; padding:24px;">No photos uploaded yet.</p>`;
+        return;
+      }
+
+      myMedia.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "media-item";
+        div.innerHTML = `
+          <img src="${item.url}">
+          <button class="delete-btn" onclick="deleteItem(${item.id})">✕</button>
+        `;
+        cont.appendChild(div);
+      });
+    }
+
+    function deleteItem(id) {
+      if (confirm("Do you want to delete this photo?")) {
+        myMedia = myMedia.filter(m => m.id !== id);
+        localStorage.setItem("madhav_imgbb_vault", JSON.stringify(myMedia));
+        renderVault();
+      }
+    }
+
+    // ==========================================
+    // AUTOMATIC PASSWORD ENCRYPTION / DECRYPTION
+    // ==========================================
+    function cipherXOR(text, key) {
+      let result = "";
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+      }
+      return result;
+    }
+
+    // 1. Export: Automatic locked with your site password
+    function exportPasswordProtectedBackup() {
+      if (myMedia.length === 0) {
+        alert("Upload photos before exporting!");
+        return;
+      }
+
+      const rawJson = JSON.stringify(myMedia);
+      // Encrypt with your current password
+      const encrypted = btoa(unescape(encodeURIComponent(cipherXOR(rawJson, currentPassword))));
+
+      const backupPackage = {
+        vaultOwner: "Madhav Kadam",
+        encryptedData: encrypted,
+        generatedAt: Date.now()
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPackage));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "Madhav_Protected_Vault.vault");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      alert("Backup downloaded! It is automatically locked with your vault password (" + currentPassword + ").");
+    }
+
+    // 2. Import: Automatic decrypted with your site password
+    function importPasswordProtectedBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsedFile = JSON.parse(e.target.result);
+
+          if (parsedFile.encryptedData) {
+            // Decrypt with current login password
+            const decoded = cipherXOR(decodeURIComponent(escape(atob(parsedFile.encryptedData))), currentPassword);
+            const loadedPhotos = JSON.parse(decoded);
+
+            if (Array.isArray(loadedPhotos)) {
+              myMedia = loadedPhotos;
+              localStorage.setItem("madhav_imgbb_vault", JSON.stringify(myMedia));
+              renderVault();
+              alert("Backup file unlocked and loaded successfully!");
+            } else {
+              alert("Password mismatch! This backup file is protected with a different password.");
+            }
+          } else if (Array.isArray(parsedFile)) {
+            // Backward compatibility for old JSON backups
+            myMedia = parsedFile;
+            localStorage.setItem("madhav_imgbb_vault", JSON.stringify(myMedia));
+            renderVault();
+            alert("Backup loaded successfully!");
+          }
+        } catch(err) {
+          alert("Cannot unlock backup file! Password incorrect or corrupted file.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+  </script>
+</body>
+</html>
