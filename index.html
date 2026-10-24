@@ -9,7 +9,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: radial-gradient(circle at top, #0f172a, #020617); color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow-x: hidden; }
     
-    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 460px; padding: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 480px; padding: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
     h2 { font-size: 20px; text-align: center; margin-bottom: 6px; color: #38bdf8; font-weight: 700; }
     p.subtext { font-size: 13px; text-align: center; color: #94a3b8; margin-bottom: 20px; }
     
@@ -24,7 +24,7 @@
     .btn-sm { width: auto; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
     .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
     
-    /* Full Screen Cinematic Animation */
+    /* Animation Overlay */
     #welcomeOverlay { display: none; position: fixed; inset: 0; background: #020617; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
     .welcome-text { font-size: 34px; font-weight: 800; background: linear-gradient(120deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; animation: glowPulse 2s ease-in-out infinite, scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .welcome-sub { margin-top: 12px; color: #94a3b8; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; }
@@ -47,10 +47,10 @@
     .media-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 16/11; }
     .media-item img { width: 100%; height: 100%; object-fit: cover; }
     .media-actions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; }
+    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; font-weight: 600; }
   </style>
 
-  <!-- Firebase Scripts (De-coupled to prevent blank screen) -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -128,7 +128,7 @@
     <!-- Create Folder & Upload Section -->
     <div class="card" style="max-width: 100%; margin-bottom: 20px;">
       <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Tours, Family)..." style="flex: 1;">
+        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Web Series, Movies)..." style="flex: 1;">
         <button type="button" onclick="createNewFolder()" style="width: auto; padding: 0 18px;">+ Add Folder</button>
       </div>
       <hr style="border: 0; border-top: 1px solid #334155; margin: 12px 0;">
@@ -162,7 +162,7 @@
         db = firebase.database();
       }
     } catch(err) {
-      console.warn("Firebase Init bypassed safely:", err);
+      console.warn("Firebase Init note:", err);
     }
 
     let currentFolder = "All Items";
@@ -170,7 +170,6 @@
     let cloudItems = JSON.parse(localStorage.getItem("madhav_local_items") || "[]");
     let cloudPassword = localStorage.getItem("madhav_saved_pass") || null;
 
-    // Window Init
     window.addEventListener("DOMContentLoaded", () => {
       if (cloudPassword) {
         document.getElementById("setupBox").style.display = "none";
@@ -183,7 +182,6 @@
       loadMedia();
     });
 
-    // Cloud Realtime Sync
     if (db) {
       db.ref("vault").on("value", (snapshot) => {
         const data = snapshot.val();
@@ -199,120 +197,4 @@
           if (data.folders) cloudFolders = data.folders;
           if (data.media) {
             cloudItems = Object.keys(data.media).map(key => ({ ...data.media[key], fbKey: key }));
-            localStorage.setItem("madhav_local_items", JSON.stringify(cloudItems));
-          }
-          renderFolders();
-          loadMedia();
-        }
-      });
-    }
-
-    function togglePass(id, el) {
-      const input = document.getElementById(id);
-      if (input.type === "password") {
-        input.type = "text";
-        el.innerText = "🙈";
-      } else {
-        input.type = "password";
-        el.innerText = "👁️";
-      }
-    }
-
-    function handleSavePassword() {
-      const p1 = document.getElementById("newPass").value.trim();
-      const p2 = document.getElementById("confirmPass").value.trim();
-      const msg = document.getElementById("setupMsg");
-
-      if (!p1 || !p2) {
-        msg.innerText = "कृपया पासवर्ड टाका!";
-        msg.style.display = "block";
-        return;
-      }
-      if (p1 !== p2) {
-        msg.innerText = "दोन्ही पासवर्ड जुळत नाहीत!";
-        msg.style.display = "block";
-        return;
-      }
-
-      cloudPassword = p1;
-      localStorage.setItem("madhav_saved_pass", p1);
-
-      if (db) {
-        try { db.ref("vault/password").set(p1); } catch(e){}
-      }
-
-      document.getElementById("setupBox").style.display = "none";
-      triggerWelcomeAnimation();
-    }
-
-    function showLoginScreen() {
-      document.getElementById("setupBox").style.display = "none";
-      document.getElementById("forgotBox").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("loginError").style.display = "none";
-      document.getElementById("passInput").value = "";
-    }
-
-    function showForgotScreen() {
-      document.getElementById("setupBox").style.display = "none";
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("forgotBox").style.display = "block";
-      document.getElementById("forgotMsg").style.display = "none";
-      document.getElementById("recoveryCodeInput").value = "";
-      document.getElementById("resetNewPass").value = "";
-    }
-
-    function handleLogin() {
-      const entered = document.getElementById("passInput").value.trim();
-      const err = document.getElementById("loginError");
-
-      if (entered === cloudPassword || (!cloudPassword && entered === "1234")) {
-        err.style.display = "none";
-        document.getElementById("loginBox").style.display = "none";
-        triggerWelcomeAnimation();
-      } else {
-        err.innerText = "चुकीचा पासवर्ड! पुन्हा प्रयत्न करा.";
-        err.style.display = "block";
-      }
-    }
-
-    function handleResetPassword() {
-      const code = document.getElementById("recoveryCodeInput").value.trim();
-      const newPass = document.getElementById("resetNewPass").value.trim();
-      const msg = document.getElementById("forgotMsg");
-
-      if (code !== MASTER_RECOVERY_CODE) {
-        msg.innerText = "चुकीचा Master Recovery Code!";
-        msg.style.display = "block";
-        return;
-      }
-      if (!newPass) {
-        msg.innerText = "कृपया नवीन पासवर्ड टाका!";
-        msg.style.display = "block";
-        return;
-      }
-
-      cloudPassword = newPass;
-      localStorage.setItem("madhav_saved_pass", newPass);
-      if (db) {
-        try { db.ref("vault/password").set(newPass); } catch(e){}
-      }
-
-      alert("पासवर्ड यशस्वीरीत्या बदलला!");
-      document.getElementById("forgotBox").style.display = "none";
-      triggerWelcomeAnimation();
-    }
-
-    function triggerWelcomeAnimation() {
-      const overlay = document.getElementById("welcomeOverlay");
-      overlay.style.display = "flex";
-      setTimeout(() => {
-        overlay.style.display = "none";
-        document.getElementById("vaultView").style.display = "block";
-        renderFolders();
-        loadMedia();
-      }, 2000);
-    }
-
-    function handleLogout() {
-      document.getElementById("vaultView").style
+            localStorage.setItem("madhav_
