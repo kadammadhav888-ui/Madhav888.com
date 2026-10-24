@@ -2,52 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Private Studio - Madhav Kadam</title>
   
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: radial-gradient(circle at top, #0f172a, #020617); color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow-x: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: #070b14; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow-x: hidden; }
     
-    .card { background: rgba(30, 41, 59, 0.95); border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 480px; padding: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
-    h2 { font-size: 20px; text-align: center; margin-bottom: 6px; color: #38bdf8; font-weight: 700; }
-    p.subtext { font-size: 13px; text-align: center; color: #94a3b8; margin-bottom: 20px; }
+    /* Login Card */
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 18px; width: 100%; max-width: 400px; padding: 26px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); text-align: center; }
+    h2 { font-size: 19px; color: #38bdf8; font-weight: 700; margin-bottom: 6px; }
+    p.subtext { font-size: 13px; color: #94a3b8; margin-bottom: 22px; }
     
-    .input-group { position: relative; width: 100%; margin-bottom: 14px; }
-    input[type="password"], input[type="text"], input[type="file"], select { width: 100%; padding: 12px 42px 12px 14px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; }
-    input:focus, select:focus { border-color: #38bdf8; }
-    .eye-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
+    .input-group { position: relative; width: 100%; margin-bottom: 16px; }
+    input[type="password"], input[type="text"] { width: 100%; padding: 14px 44px 14px 16px; border-radius: 10px; border: 1px solid #374151; background: #030712; color: #fff; font-size: 16px; outline: none; }
+    input:focus { border-color: #38bdf8; }
+    .eye-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
 
-    button { width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
-    button:hover { opacity: 0.95; }
-    .btn-danger { background: #ef4444; }
-    .btn-sm { width: auto; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
-    .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
+    button { width: 100%; padding: 14px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.2s; }
+    button:active { transform: scale(0.98); }
+    .msg-box { font-size: 13px; text-align: center; margin-top: 12px; display: none; color: #ef4444; font-weight: 600; }
     
-    /* Animation Overlay */
-    #welcomeOverlay { display: none; position: fixed; inset: 0; background: #020617; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-    .welcome-text { font-size: 34px; font-weight: 800; background: linear-gradient(120deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; animation: glowPulse 2s ease-in-out infinite, scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .welcome-sub { margin-top: 12px; color: #94a3b8; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; }
+    /* Fullscreen Cinematic Animation */
+    #welcomeOverlay { display: none; position: fixed; inset: 0; background: #030712; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; }
+    .welcome-text { font-size: 28px; font-weight: 800; background: linear-gradient(120deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; animation: glowPulse 1.8s infinite; }
+    .welcome-sub { margin-top: 10px; color: #94a3b8; font-size: 14px; letter-spacing: 2px; }
 
-    @keyframes scaleUp { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-    @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6)); } 50% { filter: drop-shadow(0 0 30px rgba(129, 140, 248, 0.9)); } }
+    @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6)); } 50% { filter: drop-shadow(0 0 25px rgba(129, 140, 248, 0.9)); } }
 
     /* Vault View */
-    .vault-container { display: none; width: 100%; max-width: 960px; }
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    .stats-card { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .stat-pill { background: #1e293b; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; font-size: 12px; color: #94a3b8; }
-    .stat-pill strong { color: #38bdf8; }
+    #vaultView { display: none; width: 100%; max-width: 500px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .lock-btn { width: auto; padding: 6px 14px; font-size: 13px; background: #1f2937; border-radius: 8px; }
 
-    .folder-nav { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; }
-    .folder-tab { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500; }
-    .folder-tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+    .upload-card { background: #111827; border: 1px dashed #38bdf8; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    input[type="file"] { display: none; }
+    .file-btn { display: inline-block; width: 100%; padding: 12px; background: #0284c7; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; color: #fff; }
+    #uploadStatus { font-size: 13px; margin-top: 10px; color: #38bdf8; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 18px; }
-    .media-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 16/11; }
+    /* Gallery */
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .media-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #1f2937; border: 1px solid #374151; }
     .media-item img { width: 100%; height: 100%; object-fit: cover; }
-    .media-actions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 8px; display: flex; justify-content: space-between; align-items: center; }
-    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; font-weight: 600; }
+    .delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.85); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   </style>
 
   <!-- Firebase Scripts -->
@@ -59,142 +56,50 @@
   <!-- 1. FULLSCREEN WELCOME ANIMATION -->
   <div id="welcomeOverlay">
     <div class="welcome-text">Welcome Madhav Kadam</div>
-    <div class="welcome-sub">Unlocking Private Studio...</div>
+    <div class="welcome-sub">Opening Private Studio...</div>
   </div>
 
-  <!-- 2. SET PASSWORD SCREEN -->
-  <div class="card" id="setupBox">
-    <h2>Welcome Madhav Kadam to Private Studio</h2>
-    <p class="subtext">Create your secret cloud password</p>
-    <div class="input-group">
-      <input type="password" id="newPass" placeholder="Enter New Secret Password">
-      <span class="eye-toggle" onclick="togglePass('newPass', this)">👁️</span>
-    </div>
-    <div class="input-group">
-      <input type="password" id="confirmPass" placeholder="Confirm Password">
-      <span class="eye-toggle" onclick="togglePass('confirmPass', this)">👁️</span>
-    </div>
-    <button type="button" onclick="handleSavePassword()">Save Password & Enter</button>
-    <p id="setupMsg" class="msg-box"></p>
-  </div>
-
-  <!-- 3. LOGIN SCREEN -->
-  <div class="card" id="loginBox" style="display: none;">
+  <!-- 2. LOGIN SCREEN -->
+  <div class="card" id="loginBox">
     <h2>Welcome Madhav Kadam to Private Studio</h2>
     <p class="subtext">Enter secret password to access vault</p>
+    
     <div class="input-group">
-      <input type="password" id="passInput" placeholder="Enter Secret Password">
-      <span class="eye-toggle" onclick="togglePass('passInput', this)">👁️</span>
+      <input type="password" id="passInput" placeholder="Password टाका (1234)">
+      <span class="eye-toggle" onclick="togglePasswordEye()">👁️</span>
     </div>
-    <button type="button" onclick="handleLogin()">Unlock Studio</button>
-    <button type="button" class="link-btn" onclick="showForgotScreen()">Forgot Password?</button>
+    
+    <button type="button" onclick="unlockStudio()">Unlock Studio</button>
     <p id="loginError" class="msg-box"></p>
   </div>
 
-  <!-- 4. FORGOT PASSWORD SCREEN -->
-  <div class="card" id="forgotBox" style="display: none;">
-    <h2>🔑 Reset Studio Password</h2>
-    <p class="subtext">Enter Master Recovery Code to change password</p>
-    <input type="text" id="recoveryCodeInput" placeholder="Enter Master Recovery Code" style="margin-bottom: 12px;">
-    <div class="input-group">
-      <input type="password" id="resetNewPass" placeholder="Enter New Password">
-      <span class="eye-toggle" onclick="togglePass('resetNewPass', this)">👁️</span>
-    </div>
-    <button type="button" onclick="handleResetPassword()">Reset Cloud Password</button>
-    <button type="button" class="link-btn" onclick="showLoginScreen()">Back to Login</button>
-    <p id="forgotMsg" class="msg-box"></p>
-  </div>
-
-  <!-- 5. MAIN VAULT VIEW -->
-  <div class="vault-container" id="vaultView">
+  <!-- 3. MAIN STUDIO VIEW -->
+  <div id="vaultView">
     <div class="header-bar">
       <div>
-        <h3 style="color: #38bdf8; font-size: 20px;">Madhav's Private Studio</h3>
-        <p style="font-size: 12px; color: #94a3b8;">Cloud Synced Across All Devices</p>
+        <h3 style="color: #38bdf8; font-size: 18px;">Madhav's Studio</h3>
+        <p style="font-size: 12px; color: #94a3b8;" id="statsText">0 Photos Synced</p>
       </div>
-      <button type="button" onclick="handleLogout()" style="width: auto; padding: 8px 18px; background: #334155;">Lock</button>
+      <button class="lock-btn" onclick="lockStudio()">Lock</button>
     </div>
 
-    <!-- Storage and Stats Tracker -->
-    <div class="stats-card">
-      <div class="stat-pill">📁 Total Items: <strong id="statActiveCount">0</strong></div>
-      <div class="stat-pill">🗑️ Recently Deleted: <strong id="statDeletedCount">0</strong></div>
-      <div class="stat-pill">⚡ Status: <strong style="color:#22c55e;">Live Synced</strong></div>
-    </div>
-
-    <!-- Folders Navigation -->
-    <div class="folder-nav" id="folderNav"></div>
-
-    <!-- Create Folder & Upload Section -->
-    <div class="card" style="max-width: 100%; margin-bottom: 20px;">
-      <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Web Series, Movies)..." style="flex: 1;">
-        <button type="button" onclick="createNewFolder()" style="width: auto; padding: 0 18px;">+ Add Folder</button>
-      </div>
-      <hr style="border: 0; border-top: 1px solid #334155; margin: 12px 0;">
-      
-      <div id="uploadArea">
-        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Target Folder:</label>
-        <select id="uploadFolderSelect" style="margin-bottom: 12px;"></select>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <input type="file" id="fileInput" accept="image/*" style="flex: 1;">
-          <button type="button" onclick="uploadPhoto()" style="width: auto; padding: 0 20px;">Upload to Cloud</button>
-        </div>
-        <p id="uploadStatus" style="font-size: 13px; text-align: center; color: #38bdf8;"></p>
-      </div>
+    <!-- Upload Card -->
+    <div class="upload-card">
+      <label class="file-btn" for="photoChooser">📷 Select Photo to Upload</label>
+      <input type="file" id="photoChooser" accept="image/*" onchange="uploadPhotoCloud()">
+      <div id="uploadStatus">फोटो निवडून थेट क्लाउडवर सेव्ह करा</div>
     </div>
 
     <!-- Gallery Grid -->
-    <div class="gallery-grid" id="photoGallery"></div>
+    <div class="gallery-grid" id="photoContainer"></div>
   </div>
 
   <script>
-    const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
-    const MASTER_RECOVERY_CODE = "MADHAV-VAULT-2026-RESET";
-
+    const IMGBB_KEY = "0b61d186b1634f7eca045a72a950fa72";
     let db = null;
+    let myMedia = JSON.parse(localStorage.getItem("madhav_personal_vault") || "[]");
+
+    // Firebase Connect (तुमची तपासलेली बरोबर लिंक)
     try {
       if (typeof firebase !== "undefined") {
-        firebase.initializeApp({
-          databaseURL: "https://kadam-valut-default-rtdb.firebaseio.com"
-        });
-        db = firebase.database();
-      }
-    } catch(err) {
-      console.warn("Firebase Init note:", err);
-    }
-
-    let currentFolder = "All Items";
-    let cloudFolders = ["General", "Movies", "Web Series"];
-    let cloudItems = JSON.parse(localStorage.getItem("madhav_local_items") || "[]");
-    let cloudPassword = localStorage.getItem("madhav_saved_pass") || null;
-
-    window.addEventListener("DOMContentLoaded", () => {
-      if (cloudPassword) {
-        document.getElementById("setupBox").style.display = "none";
-        document.getElementById("loginBox").style.display = "block";
-      } else {
-        document.getElementById("setupBox").style.display = "block";
-        document.getElementById("loginBox").style.display = "none";
-      }
-      renderFolders();
-      loadMedia();
-    });
-
-    if (db) {
-      db.ref("vault").on("value", (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          if (data.password) {
-            cloudPassword = data.password;
-            localStorage.setItem("madhav_saved_pass", data.password);
-            if (document.getElementById("vaultView").style.display !== "block" && document.getElementById("forgotBox").style.display !== "block") {
-              document.getElementById("setupBox").style.display = "none";
-              document.getElementById("loginBox").style.display = "block";
-            }
-          }
-          if (data.folders) cloudFolders = data.folders;
-          if (data.media) {
-            cloudItems = Object.keys(data.media).map(key => ({ ...data.media[key], fbKey: key }));
-            localStorage.setItem("madhav_
+        firebase
