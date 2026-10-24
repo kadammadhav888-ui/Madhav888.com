@@ -57,7 +57,7 @@
 </head>
 <body>
 
-  <!-- Fullscreen Welcome Animation -->
+  <!-- Fullscreen Welcome Animation (English) -->
   <div id="welcomeOverlay">
     <div class="welcome-text">Welcome Madhav Kadam</div>
     <div class="welcome-sub">Opening Private Studio...</div>
@@ -137,9 +137,9 @@
       </div>
     </div>
 
-    <!-- Multi-Device Sync Options (Password-Protected Backup) -->
+    <!-- Automatic Password Encrypted Backup Options -->
     <div class="sync-bar">
-      <button type="button" class="btn-secondary" onclick="exportPasswordProtectedBackup()">🔒 Save Encrypted Backup</button>
+      <button type="button" class="btn-secondary" onclick="exportPasswordProtectedBackup()">🔒 Save Backup for Drive</button>
       <button type="button" class="btn-secondary" onclick="document.getElementById('importFile').click()">📤 Load Photos Here</button>
       <input type="file" id="importFile" accept=".vault,.json" style="display:none;" onchange="importPasswordProtectedBackup(event)">
     </div>
@@ -159,8 +159,8 @@
     const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
     const MASTER_RECOVERY_KEY = "MADHAV-RESET";
     
-    // Default initial password
-    let currentPassword = localStorage.getItem("madhav_user_pass") || "madhav";
+    // Default initial password: 1234
+    let currentPassword = localStorage.getItem("madhav_user_pass") || "1234";
     let myMedia = JSON.parse(localStorage.getItem("madhav_imgbb_vault") || "[]");
 
     function toggleEye(id) {
@@ -197,7 +197,7 @@
       document.getElementById("passInput").value = "";
     }
 
-    // Change Password Functions
+    // Change Password in Vault
     function openChangePassModal() {
       document.getElementById("changePassModal").style.display = "flex";
       document.getElementById("oldPassInput").value = "";
@@ -234,11 +234,11 @@
 
       currentPassword = newP;
       localStorage.setItem("madhav_user_pass", newP);
-      alert("Password changed successfully!");
+      alert("Password updated successfully!");
       closeChangePassModal();
     }
 
-    // Forgot Password Functions
+    // Master Reset Modal
     function openForgotModal() {
       document.getElementById("forgotModal").style.display = "flex";
       document.getElementById("masterCodeInput").value = "";
@@ -268,7 +268,7 @@
 
       currentPassword = newP;
       localStorage.setItem("madhav_user_pass", newP);
-      alert("Password reset successfully! Please login with your new password.");
+      alert("Password reset successfully! Unlock using your new password.");
       closeForgotModal();
     }
 
@@ -345,7 +345,7 @@
       return result;
     }
 
-    // 1. Export: Automatic locked with your site password
+    // 1. Export: Automatically protected with website's active password
     function exportPasswordProtectedBackup() {
       if (myMedia.length === 0) {
         alert("Upload photos before exporting!");
@@ -353,7 +353,7 @@
       }
 
       const rawJson = JSON.stringify(myMedia);
-      // Encrypt with your current password
+      // Auto-encrypt with currently active password
       const encrypted = btoa(unescape(encodeURIComponent(cipherXOR(rawJson, currentPassword))));
 
       const backupPackage = {
@@ -370,10 +370,10 @@
       downloadAnchor.click();
       downloadAnchor.remove();
 
-      alert("Backup downloaded! It is automatically locked with your vault password (" + currentPassword + ").");
+      alert("Backup downloaded! It is automatically locked with your website password (" + currentPassword + "). You can safely upload this file to Google Drive.");
     }
 
-    // 2. Import: Automatic decrypted with your site password
+    // 2. Import: Automatically decrypted with website's active password
     function importPasswordProtectedBackup(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -384,7 +384,7 @@
           const parsedFile = JSON.parse(e.target.result);
 
           if (parsedFile.encryptedData) {
-            // Decrypt with current login password
+            // Decrypt with current active password
             const decoded = cipherXOR(decodeURIComponent(escape(atob(parsedFile.encryptedData))), currentPassword);
             const loadedPhotos = JSON.parse(decoded);
 
@@ -394,14 +394,8 @@
               renderVault();
               alert("Backup file unlocked and loaded successfully!");
             } else {
-              alert("Password mismatch! This backup file is protected with a different password.");
+              alert("Password mismatch! This file is protected with a different password.");
             }
-          } else if (Array.isArray(parsedFile)) {
-            // Backward compatibility for old JSON backups
-            myMedia = parsedFile;
-            localStorage.setItem("madhav_imgbb_vault", JSON.stringify(myMedia));
-            renderVault();
-            alert("Backup loaded successfully!");
           }
         } catch(err) {
           alert("Cannot unlock backup file! Password incorrect or corrupted file.");
