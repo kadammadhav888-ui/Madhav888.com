@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Private Studio - Madhav Kadam</title>
+  
+  <!-- Firebase Cloud SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: radial-gradient(circle at top, #0f172a, #020617); color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow-x: hidden; }
@@ -13,77 +18,70 @@
     p.subtext { font-size: 13px; text-align: center; color: #94a3b8; margin-bottom: 22px; }
     
     .input-group { position: relative; width: 100%; margin-bottom: 14px; }
-    input[type="password"], input[type="text"], input[type="file"], select { width: 100%; padding: 12px 42px 12px 14px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; transition: border-color 0.2s; }
+    input[type="password"], input[type="text"], input[type="file"], select { width: 100%; padding: 12px 42px 12px 14px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; }
     input:focus, select:focus { border-color: #38bdf8; }
     .eye-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
 
     button { width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
     button:hover { opacity: 0.95; transform: translateY(-1px); }
-    .btn-secondary { background: #334155; margin-top: 8px; }
     .btn-danger { background: #ef4444; }
     .btn-sm { width: auto; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
     .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
     
-    /* Fullscreen Cinematic Welcome Animation */
+    /* Fullscreen Welcome Animation */
     #welcomeOverlay { display: none; position: fixed; inset: 0; background: #020617; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
     .welcome-text { font-size: 34px; font-weight: 800; background: linear-gradient(120deg, #38bdf8, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; animation: glowPulse 2s ease-in-out infinite, scaleUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .welcome-sub { margin-top: 12px; color: #94a3b8; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; animation: fadeIn 1.5s ease forwards; }
+    .welcome-sub { margin-top: 12px; color: #94a3b8; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
 
     @keyframes scaleUp { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     @keyframes glowPulse { 0%, 100% { filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6)); } 50% { filter: drop-shadow(0 0 30px rgba(129, 140, 248, 0.9)); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* Studio Dashboard */
+    /* Vault Dashboard */
     .vault-container { display: none; width: 100%; max-width: 960px; }
     .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     .stats-card { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .stat-pill { background: #1e293b; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+    .stat-pill { background: #1e293b; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; font-size: 12px; color: #94a3b8; }
     .stat-pill strong { color: #38bdf8; }
 
     .folder-nav { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 6px; }
     .folder-tab { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500; }
     .folder-tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    .upload-tab-bar { display: flex; gap: 8px; margin-bottom: 14px; }
-    .upload-tab-btn { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex: 1; text-align: center; }
-    .upload-tab-btn.active { background: #2563eb; color: #fff; border-color: #38bdf8; }
-
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
-    .media-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; display: flex; flex-direction: column; aspect-ratio: 16/10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
-    .media-tag { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); font-size: 10px; padding: 3px 6px; border-radius: 4px; color: #38bdf8; font-weight: 600; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 18px; }
+    .media-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 16/11; }
+    .media-item img { width: 100%; height: 100%; object-fit: cover; }
     .media-actions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 8px; display: flex; justify-content: space-between; align-items: center; }
     .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; }
   </style>
 </head>
 <body>
 
-  <!-- FULLSCREEN ANIMATION OVERLAY -->
+  <!-- 1. FULLSCREEN ANIMATION OVERLAY -->
   <div id="welcomeOverlay">
     <div class="welcome-text">Welcome Madhav Kadam</div>
-    <div class="welcome-sub">Unlocking Private Studio & Cinema...</div>
+    <div class="welcome-sub">Connecting Cloud Vault...</div>
   </div>
 
-  <!-- 1. SET SECRET PASSWORD (FIRST SCREEN) -->
+  <!-- 2. FIRST TIME SETUP: SET YOUR SECRET PASSWORD -->
   <div class="card" id="setupBox" style="display: none;">
     <h2>Welcome Madhav Kadam to Private Studio</h2>
-    <p class="subtext">Set your secret master password to begin</p>
+    <p class="subtext">तुमचा स्वतःचा नवीन पासवर्ड तयार करा</p>
     <div class="input-group">
-      <input type="password" id="newPass" placeholder="Enter New Password">
+      <input type="password" id="newPass" placeholder="नवीन गुप्त पासवर्ड टाका">
       <span class="eye-toggle" onclick="togglePass('newPass', this)">👁️</span>
     </div>
     <div class="input-group">
-      <input type="password" id="confirmPass" placeholder="Confirm Password">
+      <input type="password" id="confirmPass" placeholder="पासवर्ड कन्फर्म करा">
       <span class="eye-toggle" onclick="togglePass('confirmPass', this)">👁️</span>
     </div>
-    <button onclick="handleSavePassword()">Save Password & Enter Studio</button>
+    <button onclick="handleSavePassword()">Save Password & Enter</button>
     <p id="setupMsg" class="msg-box"></p>
   </div>
 
-  <!-- 2. LOGIN SCREEN -->
+  <!-- 3. LOGIN SCREEN -->
   <div class="card" id="loginBox" style="display: none;">
     <h2>Welcome Madhav Kadam to Private Studio</h2>
-    <p class="subtext">Enter secret password to access vault</p>
+    <p class="subtext">तुमचा गुप्त पासवर्ड टाकून अनलॉक करा</p>
     <div class="input-group">
       <input type="password" id="passInput" placeholder="Enter Secret Password">
       <span class="eye-toggle" onclick="togglePass('passInput', this)">👁️</span>
@@ -93,62 +91,23 @@
     <p id="loginError" class="msg-box"></p>
   </div>
 
-  <!-- 3. FORGOT PASSWORD SCREEN -->
+  <!-- 4. FORGOT PASSWORD -->
   <div class="card" id="forgotBox" style="display: none;">
     <h2>🔑 Reset Studio Password</h2>
-    <p class="subtext">Enter Master Recovery Code to reset password</p>
-    <input type="text" id="recoveryCodeInput" placeholder="Enter Master Recovery Code">
+    <p class="subtext">Master Recovery Code वापरून नवीन पासवर्ड सेट करा</p>
+    <input type="text" id="recoveryCodeInput" placeholder="Enter Master Recovery Code" style="margin-bottom: 12px;">
     <div class="input-group">
-      <input type="password" id="resetNewPass" placeholder="Enter New Password">
+      <input type="password" id="resetNewPass" placeholder="नवीन पासवर्ड टाका">
       <span class="eye-toggle" onclick="togglePass('resetNewPass', this)">👁️</span>
     </div>
-    <button onclick="handleResetPassword()">Reset & Enter Studio</button>
+    <button onclick="handleResetPassword()">Reset Cloud Password</button>
     <button class="link-btn" onclick="showLoginScreen()">Back to Login</button>
     <p id="forgotMsg" class="msg-box"></p>
   </div>
 
-  <!-- 4. MAIN VAULT VIEW -->
+  <!-- 5. MAIN VAULT VIEW -->
   <div class="vault-container" id="vaultView">
     <div class="header-bar">
       <div>
         <h3 style="color: #38bdf8; font-size: 20px;">Madhav's Private Studio</h3>
-        <p style="font-size: 12px; color: #94a3b8;">Photos, Videos, Movies & Web Series</p>
-      </div>
-      <button onclick="handleLogout()" style="width: auto; padding: 8px 18px; background: #334155;">Lock Studio</button>
-    </div>
-
-    <!-- Storage and Stats -->
-    <div class="stats-card">
-      <div class="stat-pill">📁 Total Items: <strong id="statActiveCount">0</strong></div>
-      <div class="stat-pill">🎬 Movies/Series: <strong id="statVideoCount">0</strong></div>
-      <div class="stat-pill">🗑️ Recently Deleted: <strong id="statDeletedCount">0</strong></div>
-    </div>
-
-    <!-- Folder Navigation Bar -->
-    <div class="folder-nav" id="folderNav"></div>
-
-    <!-- Add Folder & Media Controls -->
-    <div class="card" style="max-width: 100%; margin-bottom: 20px;">
-      <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Action Movies, Series S1)..." style="flex: 1; margin: 0;">
-        <button onclick="createNewFolder()" style="width: auto; padding: 0 18px;">+ Add Folder</button>
-      </div>
-      <hr style="border: 0; border-top: 1px solid #334155; margin: 12px 0;">
-      
-      <div id="uploadArea">
-        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Target Folder:</label>
-        <select id="uploadFolderSelect" style="margin-bottom: 12px;"></select>
-
-        <!-- Toggle Upload Type -->
-        <div class="upload-tab-bar">
-          <div class="upload-tab-btn active" id="tabPhotoBtn" onclick="switchUploadMode('photo')">🖼️ Upload Photo</div>
-          <div class="upload-tab-btn" id="tabVideoBtn" onclick="switchUploadMode('video')">🎬 Add Movie / Video Link</div>
-        </div>
-
-        <!-- 1. Photo Upload (ImgBB) -->
-        <div id="photoModeArea">
-          <input type="file" id="fileInput" accept="image/*" style="margin-bottom: 12px;">
-          <button onclick="uploadPhoto()">Upload Photo to Cloud</button>
-        </div>
-
-        <!-- 2.
+        <p style="font-size: 12px; color:
