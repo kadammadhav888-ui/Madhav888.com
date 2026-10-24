@@ -7,36 +7,81 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: #0b1329; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
-    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    h2 { font-size: 20px; text-align: center; margin-bottom: 20px; color: #38bdf8; }
-    input[type="password"], input[type="file"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; outline: none; margin-bottom: 16px; }
-    button { width: 100%; padding: 12px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 440px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h2 { font-size: 20px; text-align: center; margin-bottom: 8px; color: #38bdf8; }
+    p.subtext { font-size: 13px; text-align: center; color: #94a3b8; margin-bottom: 20px; }
+    input[type="password"], input[type="text"], input[type="tel"], input[type="file"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
+    input:focus { border-color: #38bdf8; }
+    button { width: 100%; padding: 12px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; margin-top: 4px; }
     button:hover { background: #0369a1; }
+    .btn-secondary { background: #475569; margin-top: 8px; }
+    .btn-secondary:hover { background: #334155; }
+    .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
     .vault-container { display: none; width: 100%; max-width: 760px; }
     .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
     .photo-item { position: relative; border-radius: 8px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 1; }
     .photo-item img { width: 100%; height: 100%; object-fit: cover; }
     .delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
-    .status-text { font-size: 13px; text-align: center; margin-top: 10px; color: #38bdf8; }
+    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; }
+    .msg-error { color: #ef4444; }
+    .msg-success { color: #22c55e; }
+    .otp-alert { background: #0369a1; color: #fff; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; margin-bottom: 14px; display: none; }
   </style>
 </head>
 <body>
 
-  <!-- LOCK SCREEN -->
-  <div class="card" id="loginBox">
-    <h2>🔒 Madhav Personal Vault</h2>
-    <input type="password" id="pinInput" placeholder="Enter Secret PIN">
-    <button onclick="handleLogin()">Unlock Vault</button>
-    <p id="loginError" style="color:#ef4444; font-size:13px; text-align:center; margin-top:10px; display:none;">चुकीचा PIN! पुन्हा प्रयत्न करा.</p>
+  <!-- 1. FIRST TIME SETUP (PIN + MOBILE NUMBER) -->
+  <div class="card" id="setupBox" style="display: none;">
+    <h2>🔒 Setup Personal Vault</h2>
+    <p class="subtext">Pehli baar setup: Apna PIN aur Mobile number register karein</p>
+    <input type="tel" id="setupMobile" placeholder="10 Digit Mobile Number" maxlength="10">
+    <input type="password" id="newPin" placeholder="Create Secret PIN">
+    <input type="password" id="confirmPin" placeholder="Confirm Secret PIN">
+    <button onclick="handleSetup()">Save & Enter Vault</button>
+    <p id="setupMsg" class="msg-box msg-error"></p>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- 2. LOGIN SCREEN -->
+  <div class="card" id="loginBox" style="display: none;">
+    <h2>🔒 Private Photo Vault</h2>
+    <p class="subtext">Enter secret PIN to unlock</p>
+    <input type="password" id="pinInput" placeholder="Enter Secret PIN">
+    <button onclick="handleLogin()">Unlock Vault</button>
+    <button class="link-btn" onclick="showForgotScreen()">Forgot PIN? (Reset with Mobile OTP)</button>
+    <p id="loginError" class="msg-box msg-error"></p>
+  </div>
+
+  <!-- 3. FORGOT PIN / MOBILE OTP SCREEN -->
+  <div class="card" id="forgotBox" style="display: none;">
+    <h2>📱 Mobile OTP Verification</h2>
+    <p class="subtext">Enter your registered mobile number</p>
+
+    <!-- Step A: Mobile Number Input -->
+    <div id="stepMobile">
+      <input type="tel" id="recoveryMobile" placeholder="Registered 10 Digit Mobile Number" maxlength="10">
+      <button onclick="sendOTP()">Send OTP</button>
+    </div>
+
+    <!-- Step B: OTP + New PIN Input (Hidden by default) -->
+    <div id="stepOtp" style="display: none;">
+      <div id="otpDisplay" class="otp-alert"></div>
+      <input type="text" id="enteredOtp" placeholder="Enter 6-Digit OTP" maxlength="6">
+      <input type="password" id="resetNewPin" placeholder="Enter New PIN">
+      <button onclick="verifyOtpAndReset()">Verify OTP & Reset PIN</button>
+      <button class="btn-secondary" onclick="resendOTP()">Resend OTP</button>
+    </div>
+
+    <button class="link-btn" onclick="showLoginScreen()">Back to Login</button>
+    <p id="forgotMsg" class="msg-box msg-error"></p>
+  </div>
+
+  <!-- 4. MAIN VAULT VIEW -->
   <div class="vault-container" id="vaultView">
     <div class="header-bar">
       <div>
-        <h3 style="color: #38bdf8;">Cloud Photo Vault</h3>
-        <p style="font-size: 12px; color: #94a3b8;">Free Cloud Storage</p>
+        <h3 style="color: #38bdf8;">Madhav's Vault</h3>
+        <p style="font-size: 12px; color: #94a3b8;">Unlimited Cloud Storage</p>
       </div>
       <button onclick="handleLogout()" style="width: auto; padding: 8px 16px; background: #475569;">Lock</button>
     </div>
@@ -44,36 +89,153 @@
     <div class="card" style="max-width: 100%;">
       <input type="file" id="fileInput" accept="image/*">
       <button onclick="uploadPhoto()">Upload Photo to Cloud</button>
-      <p id="uploadStatus" class="status-text"></p>
+      <p id="uploadStatus" style="font-size: 13px; text-align: center; margin-top: 10px; color: #38bdf8;"></p>
     </div>
 
     <div class="gallery-grid" id="photoGallery"></div>
   </div>
 
   <script>
-    // तुमची ImgBB API Key थेट जोडलेली आहे
+    // ImgBB API Key
     const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
 
-    // सीक्रेट PIN
-    const SECRET_PIN = "1234";
+    let generatedOTP = null;
 
+    window.onload = function() {
+      const savedPin = localStorage.getItem("vault_master_pin");
+      const savedMobile = localStorage.getItem("vault_mobile");
+      if (!savedPin || !savedMobile) {
+        document.getElementById("setupBox").style.display = "block";
+      } else {
+        document.getElementById("loginBox").style.display = "block";
+      }
+    };
+
+    function showLoginScreen() {
+      document.getElementById("setupBox").style.display = "none";
+      document.getElementById("forgotBox").style.display = "none";
+      document.getElementById("vaultView").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("loginError").style.display = "none";
+      document.getElementById("pinInput").value = "";
+    }
+
+    function showForgotScreen() {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("forgotBox").style.display = "block";
+      document.getElementById("stepMobile").style.display = "block";
+      document.getElementById("stepOtp").style.display = "none";
+      document.getElementById("forgotMsg").style.display = "none";
+      document.getElementById("recoveryMobile").value = "";
+    }
+
+    // 1. FIRST TIME REGISTER
+    function handleSetup() {
+      const mob = document.getElementById("setupMobile").value.trim();
+      const p1 = document.getElementById("newPin").value.trim();
+      const p2 = document.getElementById("confirmPin").value.trim();
+      const msg = document.getElementById("setupMsg");
+
+      if (mob.length !== 10 || isNaN(mob)) {
+        msg.innerText = "Kripya 10 ankon ka valid mobile number daalein!";
+        msg.style.display = "block";
+        return;
+      }
+      if (!p1 || !p2) {
+        msg.innerText = "Kripya PIN enter karein!";
+        msg.style.display = "block";
+        return;
+      }
+      if (p1 !== p2) {
+        msg.innerText = "Dono PIN match nahi ho rahe!";
+        msg.style.display = "block";
+        return;
+      }
+
+      localStorage.setItem("vault_mobile", mob);
+      localStorage.setItem("vault_master_pin", p1);
+      document.getElementById("setupBox").style.display = "none";
+      openVault();
+    }
+
+    // 2. NORMAL LOGIN
     function handleLogin() {
-      const enteredPin = document.getElementById("pinInput").value;
+      const enteredPin = document.getElementById("pinInput").value.trim();
+      const savedPin = localStorage.getItem("vault_master_pin");
       const errorMsg = document.getElementById("loginError");
-      if (enteredPin === SECRET_PIN) {
+
+      if (enteredPin === savedPin) {
         errorMsg.style.display = "none";
         document.getElementById("loginBox").style.display = "none";
-        document.getElementById("vaultView").style.display = "block";
-        loadPhotos();
+        openVault();
       } else {
+        errorMsg.innerText = "Galat PIN! Dubara try karein.";
         errorMsg.style.display = "block";
       }
     }
 
+    // 3. SEND OTP
+    function sendOTP() {
+      const inputMob = document.getElementById("recoveryMobile").value.trim();
+      const savedMob = localStorage.getItem("vault_mobile");
+      const msg = document.getElementById("forgotMsg");
+
+      if (inputMob !== savedMob) {
+        msg.innerText = "Ye mobile number registered nahi hai!";
+        msg.style.display = "block";
+        return;
+      }
+
+      // Generate Random 6 Digit OTP
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+      msg.style.display = "none";
+      document.getElementById("stepMobile").style.display = "none";
+      document.getElementById("stepOtp").style.display = "block";
+
+      const alertBox = document.getElementById("otpDisplay");
+      alertBox.innerText = `📩 Verification Code: ${generatedOTP}`;
+      alertBox.style.display = "block";
+    }
+
+    function resendOTP() {
+      sendOTP();
+      alert("Naya OTP bhej diya gaya hai!");
+    }
+
+    // 4. VERIFY OTP & RESET PIN
+    function verifyOtpAndReset() {
+      const enteredOtp = document.getElementById("enteredOtp").value.trim();
+      const newPin = document.getElementById("resetNewPin").value.trim();
+      const msg = document.getElementById("forgotMsg");
+
+      if (enteredOtp !== generatedOTP) {
+        msg.innerText = "Galat OTP! Kripya sahi OTP daalein.";
+        msg.style.display = "block";
+        return;
+      }
+
+      if (!newPin) {
+        msg.innerText = "Kripya naya PIN enter karein!";
+        msg.style.display = "block";
+        return;
+      }
+
+      localStorage.setItem("vault_master_pin", newPin);
+      alert("PIN successfully reset ho gaya hai!");
+      generatedOTP = null;
+      document.getElementById("forgotBox").style.display = "none";
+      openVault();
+    }
+
+    function openVault() {
+      document.getElementById("vaultView").style.display = "block";
+      loadPhotos();
+    }
+
     function handleLogout() {
-      document.getElementById("pinInput").value = "";
-      document.getElementById("loginBox").style.display = "block";
       document.getElementById("vaultView").style.display = "none";
+      showLoginScreen();
     }
 
     async function uploadPhoto() {
@@ -82,12 +244,11 @@
       const file = fileInput.files[0];
 
       if (!file) {
-        alert("कृपया आधी फोटो निवडा!");
+        alert("Pehle koi photo select karein!");
         return;
       }
 
-      status.innerText = "क्लाउडवर अपलोड होत आहे...";
-
+      status.innerText = "Cloud me upload ho raha hai...";
       const formData = new FormData();
       formData.append("image", file);
 
@@ -99,7 +260,7 @@
         const data = await response.json();
 
         if (data.success) {
-          status.innerText = "अपलोड यशस्वी झाले!";
+          status.innerText = "Upload complete!";
           fileInput.value = "";
           savePhotoUrl(data.data.url);
           setTimeout(() => { status.innerText = ""; }, 2000);
@@ -107,7 +268,7 @@
           status.innerText = "Error: " + data.error.message;
         }
       } catch (err) {
-        status.innerText = "अपलोड अयशस्वी: " + err.message;
+        status.innerText = "Upload fail: " + err.message;
       }
     }
 
@@ -124,7 +285,7 @@
 
       gallery.innerHTML = "";
       if (photos.length === 0) {
-        gallery.innerHTML = "<p style='color:#94a3b8; grid-column: 1/-1; text-align:center;'>अजून एकही फोटो नाही. नवीन फोटो अपलोड करा!</p>";
+        gallery.innerHTML = "<p style='color:#94a3b8; grid-column: 1/-1; text-align:center;'>Abhi tak koi photo nahi hai. Upload karein!</p>";
         return;
       }
 
@@ -140,7 +301,7 @@
     }
 
     function deletePhoto(index) {
-      if (confirm("हा फोटो हटवायचा आहे का?")) {
+      if (confirm("Kya aap ise list se hatana chahte hain?")) {
         let photos = JSON.parse(localStorage.getItem("vault_photos") || "[]");
         photos.splice(index, 1);
         localStorage.setItem("vault_photos", JSON.stringify(photos));
