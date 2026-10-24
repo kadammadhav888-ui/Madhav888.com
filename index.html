@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background: radial-gradient(circle at top, #0f172a, #020617); color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; overflow-x: hidden; }
     
-    .card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 460px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .card { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 480px; padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
     h2 { font-size: 21px; text-align: center; margin-bottom: 6px; color: #38bdf8; font-weight: 700; }
     p.subtext { font-size: 13px; text-align: center; color: #94a3b8; margin-bottom: 22px; }
     
@@ -21,7 +21,7 @@
     button:hover { opacity: 0.95; transform: translateY(-1px); }
     .btn-secondary { background: #334155; margin-top: 8px; }
     .btn-danger { background: #ef4444; }
-    .btn-sm { width: auto; padding: 6px 12px; font-size: 12px; }
+    .btn-sm { width: auto; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
     .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; text-align: center; }
     
     /* Fullscreen Cinematic Welcome Animation */
@@ -34,7 +34,7 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* Studio Dashboard */
-    .vault-container { display: none; width: 100%; max-width: 900px; }
+    .vault-container { display: none; width: 100%; max-width: 960px; }
     .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     .stats-card { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
     .stat-pill { background: #1e293b; border: 1px solid #334155; padding: 8px 14px; border-radius: 8px; font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
@@ -44,10 +44,15 @@
     .folder-tab { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500; }
     .folder-tab.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 18px; }
-    .photo-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-actions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 8px; display: flex; justify-content: space-between; gap: 6px; }
+    .upload-tab-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+    .upload-tab-btn { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; flex: 1; text-align: center; }
+    .upload-tab-btn.active { background: #2563eb; color: #fff; border-color: #38bdf8; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
+    .media-item { position: relative; border-radius: 10px; overflow: hidden; background: #0f172a; border: 1px solid #334155; display: flex; flex-direction: column; aspect-ratio: 16/10; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
+    .media-tag { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); font-size: 10px; padding: 3px 6px; border-radius: 4px; color: #38bdf8; font-weight: 600; }
+    .media-actions { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 8px; display: flex; justify-content: space-between; align-items: center; }
     .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; }
   </style>
 </head>
@@ -56,7 +61,7 @@
   <!-- FULLSCREEN ANIMATION OVERLAY -->
   <div id="welcomeOverlay">
     <div class="welcome-text">Welcome Madhav Kadam</div>
-    <div class="welcome-sub">Unlocking Private Studio...</div>
+    <div class="welcome-sub">Unlocking Private Studio & Cinema...</div>
   </div>
 
   <!-- 1. SET SECRET PASSWORD (FIRST SCREEN) -->
@@ -91,7 +96,7 @@
   <!-- 3. FORGOT PASSWORD SCREEN -->
   <div class="card" id="forgotBox" style="display: none;">
     <h2>🔑 Reset Studio Password</h2>
-    <p class="subtext">Enter your Master Recovery Code to reset password</p>
+    <p class="subtext">Enter Master Recovery Code to reset password</p>
     <input type="text" id="recoveryCodeInput" placeholder="Enter Master Recovery Code">
     <div class="input-group">
       <input type="password" id="resetNewPass" placeholder="Enter New Password">
@@ -107,186 +112,43 @@
     <div class="header-bar">
       <div>
         <h3 style="color: #38bdf8; font-size: 20px;">Madhav's Private Studio</h3>
-        <p style="font-size: 12px; color: #94a3b8;">End-to-End Encrypted Cloud Storage</p>
+        <p style="font-size: 12px; color: #94a3b8;">Photos, Videos, Movies & Web Series</p>
       </div>
       <button onclick="handleLogout()" style="width: auto; padding: 8px 18px; background: #334155;">Lock Studio</button>
     </div>
 
     <!-- Storage and Stats -->
     <div class="stats-card">
-      <div class="stat-pill">📁 Active Photos: <strong id="statActiveCount">0</strong></div>
+      <div class="stat-pill">📁 Total Items: <strong id="statActiveCount">0</strong></div>
+      <div class="stat-pill">🎬 Movies/Series: <strong id="statVideoCount">0</strong></div>
       <div class="stat-pill">🗑️ Recently Deleted: <strong id="statDeletedCount">0</strong></div>
-      <div class="stat-pill">☁️ Used Storage: <strong id="statStorageSize">0.0 MB</strong> / Unlimited</div>
     </div>
 
     <!-- Folder Navigation Bar -->
     <div class="folder-nav" id="folderNav"></div>
 
-    <!-- Upload & New Folder Control -->
+    <!-- Add Folder & Media Controls -->
     <div class="card" style="max-width: 100%; margin-bottom: 20px;">
       <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Tours, Family)..." style="flex: 1; margin: 0;">
+        <input type="text" id="newFolderName" placeholder="Create new folder (e.g. Action Movies, Series S1)..." style="flex: 1; margin: 0;">
         <button onclick="createNewFolder()" style="width: auto; padding: 0 18px;">+ Add Folder</button>
       </div>
       <hr style="border: 0; border-top: 1px solid #334155; margin: 12px 0;">
+      
       <div id="uploadArea">
-        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Select folder to upload:</label>
+        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Target Folder:</label>
         <select id="uploadFolderSelect" style="margin-bottom: 12px;"></select>
-        <input type="file" id="fileInput" accept="image/*" style="margin-bottom: 12px;">
-        <button onclick="uploadPhoto()">Upload Photo to Cloud</button>
-        <p id="uploadStatus" style="font-size: 13px; text-align: center; margin-top: 10px; color: #38bdf8;"></p>
-      </div>
-    </div>
 
-    <!-- Gallery Grid -->
-    <div class="gallery-grid" id="photoGallery"></div>
-  </div>
+        <!-- Toggle Upload Type -->
+        <div class="upload-tab-bar">
+          <div class="upload-tab-btn active" id="tabPhotoBtn" onclick="switchUploadMode('photo')">🖼️ Upload Photo</div>
+          <div class="upload-tab-btn" id="tabVideoBtn" onclick="switchUploadMode('video')">🎬 Add Movie / Video Link</div>
+        </div>
 
-  <script>
-    const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
-    const MASTER_RECOVERY_CODE = "MADHAV-VAULT-2026-RESET";
+        <!-- 1. Photo Upload (ImgBB) -->
+        <div id="photoModeArea">
+          <input type="file" id="fileInput" accept="image/*" style="margin-bottom: 12px;">
+          <button onclick="uploadPhoto()">Upload Photo to Cloud</button>
+        </div>
 
-    let currentFolder = "All Photos";
-
-    window.onload = function() {
-      const savedPass = localStorage.getItem("madhav_user_secret_password");
-      if (!savedPass) {
-        document.getElementById("setupBox").style.display = "block";
-      } else {
-        document.getElementById("loginBox").style.display = "block";
-      }
-    };
-
-    function togglePass(inputId, el) {
-      const input = document.getElementById(inputId);
-      if (input.type === "password") {
-        input.type = "text";
-        el.innerText = "🙈";
-      } else {
-        input.type = "password";
-        el.innerText = "👁️";
-      }
-    }
-
-    function showLoginScreen() {
-      document.getElementById("setupBox").style.display = "none";
-      document.getElementById("forgotBox").style.display = "none";
-      document.getElementById("vaultView").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("passInput").value = "";
-      document.getElementById("loginError").style.display = "none";
-    }
-
-    function showForgotScreen() {
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("forgotBox").style.display = "block";
-      document.getElementById("forgotMsg").style.display = "none";
-      document.getElementById("recoveryCodeInput").value = "";
-      document.getElementById("resetNewPass").value = "";
-    }
-
-    function handleSavePassword() {
-      const p1 = document.getElementById("newPass").value.trim();
-      const p2 = document.getElementById("confirmPass").value.trim();
-      const msg = document.getElementById("setupMsg");
-
-      if (!p1 || !p2) {
-        msg.innerText = "Kripya password daalein!";
-        msg.style.display = "block";
-        return;
-      }
-      if (p1 !== p2) {
-        msg.innerText = "Dono password match nahi ho rahe!";
-        msg.style.display = "block";
-        return;
-      }
-
-      localStorage.setItem("madhav_user_secret_password", p1);
-      document.getElementById("setupBox").style.display = "none";
-      triggerWelcomeAnimation();
-    }
-
-    function handleLogin() {
-      const enteredPass = document.getElementById("passInput").value.trim();
-      const savedPass = localStorage.getItem("madhav_user_secret_password");
-      const errorMsg = document.getElementById("loginError");
-
-      if (enteredPass === savedPass) {
-        errorMsg.style.display = "none";
-        document.getElementById("loginBox").style.display = "none";
-        triggerWelcomeAnimation();
-      } else {
-        errorMsg.innerText = "Galat Password! Sahi password enter karein.";
-        errorMsg.style.display = "block";
-      }
-    }
-
-    function handleResetPassword() {
-      const code = document.getElementById("recoveryCodeInput").value.trim();
-      const newPass = document.getElementById("resetNewPass").value.trim();
-      const msg = document.getElementById("forgotMsg");
-
-      if (code !== MASTER_RECOVERY_CODE) {
-        msg.innerText = "Galat Recovery Code!";
-        msg.style.display = "block";
-        return;
-      }
-      if (!newPass) {
-        msg.innerText = "Kripya naya password enter karein!";
-        msg.style.display = "block";
-        return;
-      }
-
-      localStorage.setItem("madhav_user_secret_password", newPass);
-      document.getElementById("forgotBox").style.display = "none";
-      triggerWelcomeAnimation();
-    }
-
-    function triggerWelcomeAnimation() {
-      const overlay = document.getElementById("welcomeOverlay");
-      overlay.style.display = "flex";
-
-      setTimeout(() => {
-        overlay.style.display = "none";
-        document.getElementById("vaultView").style.display = "block";
-        renderFolders();
-        loadPhotos();
-      }, 2400);
-    }
-
-    function handleLogout() {
-      document.getElementById("vaultView").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("passInput").value = "";
-    }
-
-    function getFolders() {
-      return JSON.parse(localStorage.getItem("vault_folders") || '["General", "Web Series"]');
-    }
-
-    function saveFolders(folders) {
-      localStorage.setItem("vault_folders", JSON.stringify(folders));
-    }
-
-    function createNewFolder() {
-      const folderName = document.getElementById("newFolderName").value.trim();
-      if (!folderName) return;
-      let folders = getFolders();
-      if (folders.includes(folderName) || folderName === "All Photos" || folderName === "Recently Deleted") {
-        alert("Ye folder pehle se bana hai!");
-        return;
-      }
-      folders.push(folderName);
-      saveFolders(folders);
-      document.getElementById("newFolderName").value = "";
-      renderFolders();
-    }
-
-    function renderFolders() {
-      const nav = document.getElementById("folderNav");
-      const select = document.getElementById("uploadFolderSelect");
-      const folders = getFolders();
-
-      const tabs = ["All Photos", ...folders, "Recently Deleted"];
-      nav.innerHTML = tabs.map(f => `
-        <div class="folder-tab
+        <!-- 2.
