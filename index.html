@@ -1,315 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Madhav Personal Data</title>
-<style>
-:root{--bg:#f4f6fb;--card:#fff;--tx:#14181f;--mut:#667085;--ac:#2f5bea;--ac2:#fff;--bd:#dfe3ec;--er:#d92d20;--ok:#12805c;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1218;--card:#181c25;--tx:#eef1f6;--mut:#98a2b3;--ac:#6c8cff;--ac2:#0b0e14;--bd:#2a3040;--er:#f97066;--ok:#47cd9c}}
-:root[data-theme="dark"]{--bg:#0f1218;--card:#181c25;--tx:#eef1f6;--mut:#98a2b3;--ac:#6c8cff;--ac2:#0b0e14;--bd:#2a3040;--er:#f97066;--ok:#47cd9c}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif;line-height:1.5}
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px}
-.box{max-width:420px;margin:8vh auto 0;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:26px}
-h1{font-size:22px;margin:0 0 6px}h2{font-size:18px;margin:0}
-p{color:var(--mut);margin:6px 0 14px;font-size:14px}
-input[type=password],input[type=text]{width:100%;padding:12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font-size:16px}
-button,.btn{background:var(--ac);color:var(--ac2);border:0;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block}
-button.full{width:100%}
-button.ghost{background:transparent;color:var(--ac);padding:8px 0;font-weight:500}
-button.sec{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
-.err{color:var(--er);font-size:14px;min-height:20px;margin:4px 0}
-.rec{font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:1px;background:var(--bg);border:1px dashed var(--ac);border-radius:10px;padding:14px;text-align:center;word-break:break-all;margin:10px 0;user-select:all}
-.hide{display:none!important}
-.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.item{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
-.item img,.item video{width:100%;height:180px;object-fit:cover;display:block;background:#000}
-.item .m{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;font-size:12px;color:var(--mut);gap:6px}
-.item .m span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item .m button{padding:4px 9px;font-size:12px;background:transparent;color:var(--er);border:1px solid var(--bd)}
-.empty{text-align:center;color:var(--mut);padding:50px 10px;border:1px dashed var(--bd);border-radius:12px}
-label.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:10px 0}
-.note{font-size:12px;color:var(--mut);margin-top:16px}
-
-body{background:radial-gradient(1100px 520px at 50% -10%,color-mix(in srgb,var(--ac) 20%,transparent),transparent),var(--bg);min-height:100vh}
-.box{box-shadow:0 12px 44px rgba(20,30,70,.14);border-radius:20px;padding:34px 28px;animation:rise .5s ease both}
-.box p{text-align:center}
-.brand{text-align:center;margin-bottom:16px}
-.logo{width:64px;height:64px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--ac),#7c4dff);box-shadow:0 8px 24px rgba(70,90,230,.35)}
-.brand h1{font-size:23px;margin:0;letter-spacing:.2px}
-.brand span{color:var(--mut);font-size:13px}
-input:focus{outline:2px solid var(--ac);border-color:transparent}
-button:hover{filter:brightness(1.08)}button:active{transform:scale(.98)}
-.pw{position:relative}.pw input{padding-right:70px}
-.eye{position:absolute;right:6px;top:6px;background:transparent;color:var(--ac);padding:6px 10px;font-size:13px;font-weight:600}
-.sec{margin-top:18px;text-align:center;font-size:12px;color:var(--mut)}
-@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes pop{from{opacity:0;transform:scale(.4) rotate(-20deg)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important}}
-
-#welcome{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:#fff;text-align:center;padding:20px;background:linear-gradient(120deg,#070a24,#1b2a7a,#4b2a9a,#0a1240);background-size:300% 300%;animation:bgmove 6s ease infinite;transition:opacity .7s}
-#welcome.out{opacity:0}
-#welcome>*{position:relative;z-index:2}
-#welcome .ring,#welcome .orb{position:absolute;z-index:1}
-#welcome .ring{width:min(92vw,640px);aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.1);border-top-color:rgba(160,180,255,.95);animation:spin 3s linear infinite,fadein 1s ease both}
-#welcome .ring.r2{width:min(72vw,470px);border-top-color:rgba(192,140,255,.95);animation:spin 2.2s linear infinite reverse,fadein 1.4s ease both}
-#welcome .orb{width:260px;height:260px;border-radius:50%;filter:blur(70px);opacity:.45;animation:float 5s ease-in-out infinite}
-.orb.o1{background:#4f6bff;left:-60px;top:10%}.orb.o2{background:#9b5cff;right:-60px;bottom:8%;animation-delay:-2s}
-.wlogo{width:84px;height:84px;border-radius:24px;margin-bottom:22px;animation:pop .9s cubic-bezier(.2,1.4,.4,1) both}
-.wk{letter-spacing:.5em;font-size:13px;color:#b9c4ff;margin-bottom:16px;opacity:0;animation:fadein 1s ease .3s forwards}
-#w-h{margin:0;font-weight:800;line-height:1.05;font-size:clamp(46px,14vw,120px);letter-spacing:.06em}
-.wl{display:block}
-.wl .c{display:inline-block;opacity:0;transform:translateY(46px) scale(.7);filter:blur(12px);animation:drop .7s cubic-bezier(.2,1.2,.3,1) forwards;color:#fff;text-shadow:0 0 30px rgba(140,160,255,.55)}
-.wl2 .c{color:#ffe0b3;text-shadow:0 0 30px rgba(255,190,120,.5)}
-#w-line{height:3px;width:0;margin:22px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#8fa5ff,#c08bff,transparent);animation:grow 1.2s ease 2s forwards}
-#w-sub{opacity:0;margin-top:16px;color:#c5cdf5;font-size:15px;animation:fadein .9s ease 2.5s forwards}
-@keyframes drop{to{opacity:1;transform:none;filter:none}}
-@keyframes bgmove{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-@keyframes grow{to{width:min(70vw,380px)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madhav Personal Vault</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0b1329; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h2 { font-size: 20px; text-align: center; margin-bottom: 20px; color: #38bdf8; }
+    input[type="password"], input[type="file"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 16px; outline: none; margin-bottom: 16px; }
+    button { width: 100%; padding: 12px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; }
+    button:hover { background: #0369a1; }
+    .vault-container { display: none; width: 100%; max-width: 760px; }
+    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+    .photo-item { position: relative; border-radius: 8px; overflow: hidden; background: #0f172a; border: 1px solid #334155; aspect-ratio: 1; }
+    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+    .delete-btn { position: absolute; top: 6px; right: 6px; background: rgba(239, 68, 68, 0.9); color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .status-text { font-size: 13px; text-align: center; margin-top: 10px; color: #38bdf8; }
+  </style>
 </head>
 <body>
-<div id="lb" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:50;display:flex;align-items:center;justify-content:center"><img id="lb-img" alt="" style="max-width:100%;max-height:100%;object-fit:contain"><button id="lb-x" style="position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px">✕ Close</button></div>
-<div id="welcome" class="hide"><div class="orb o1"></div><div class="orb o2"></div><div class="ring"></div><div class="ring r2"></div><div class="logo wlogo"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="wk">WELCOME</div><h2 id="w-h"></h2><div id="w-line"></div><div id="w-sub"></div></div>
-<div class="wrap">
 
-
-
-<div id="v-setup" class="box hide">
-  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h1>Madhav Personal Data</h1><span>Private &amp; encrypted vault</span></div>
-  <p>Create a password to get started. Your photos and videos are encrypted on your device before they are saved, so nobody can view them without your password.</p>
-  <input type="password" id="s-pw" placeholder="New password (at least 8 characters)" autocomplete="new-password">
-  <input type="password" id="s-pw2" placeholder="Confirm password" autocomplete="new-password">
-  <div class="err" id="s-err"></div>
-  <button class="full" id="s-go">Create vault</button>
-</div>
-
-
-<div id="v-rec" class="box hide">
-  <h1>🔑 Save your recovery key</h1>
-  <p>If you forget your password, this key is the only way to get your data back. Write it down or save it somewhere safe. It will not be shown again.</p>
-  <div class="rec" id="rec-key"></div>
-  <button class="sec full" id="rec-copy">Copy key</button>
-  <label class="chk"><input type="checkbox" id="rec-ok"> I have saved my recovery key safely</label>
-  <button class="full" id="rec-go" disabled>Continue</button>
-</div>
-
-
-<div id="v-login" class="box hide">
-  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h1>Madhav Personal Data</h1><span>Private &amp; encrypted vault</span></div>
-  <p>Welcome back. Enter your password to unlock your vault.</p>
-  <input type="password" id="l-pw" placeholder="Password" autocomplete="current-password">
-  <div class="err" id="l-err"></div>
-  <button class="full" id="l-go">Unlock</button>
-  <button class="ghost" id="l-forgot">Forgot password?</button><div class="sec">🔐 AES-256 encryption · Your files are encrypted on your device</div>
-</div>
-
-
-<div id="v-forgot" class="box hide">
-  <h1>Reset password</h1>
-  <p>Enter your recovery key and a new password.</p>
-  <input type="text" id="f-rec" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" autocomplete="off">
-  <input type="password" id="f-pw" placeholder="New password (at least 8 characters)" autocomplete="new-password">
-  <input type="password" id="f-pw2" placeholder="Confirm new password" autocomplete="new-password">
-  <div class="err" id="f-err"></div>
-  <button class="full" id="f-go">Reset password</button>
-  <button class="ghost" id="f-back">← Back</button>
-</div>
-
-
-<div id="v-vault" class="hide">
-  <div class="bar">
-    <h2>🔓 Madhav Personal Data</h2>
-    <div>
-      <label class="btn" for="up">+ Add photos / videos</label>
-      <input type="file" id="up" accept="image/*,video/*" multiple class="hide">
-      <button class="sec" id="lock">🔒 Lock</button>
-    </div>
+  <!-- LOCK SCREEN -->
+  <div class="card" id="loginBox">
+    <h2>🔒 Madhav Personal Vault</h2>
+    <input type="password" id="pinInput" placeholder="Enter Secret PIN">
+    <button onclick="handleLogin()">Unlock Vault</button>
+    <p id="loginError" style="color:#ef4444; font-size:13px; text-align:center; margin-top:10px; display:none;">चुकीचा PIN! पुन्हा प्रयत्न करा.</p>
   </div>
-  <div id="meter" class="note" style="margin:0 0 14px"></div>
-  <div class="err" id="u-err"></div>
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty hide">No files yet. Add photos or videos using the button above.</div>
-  <div class="note">Files are stored encrypted inside this browser, on this device only. Clearing your browser data or changing your phone removes them, so keep a copy of anything important. The vault locks itself after 5 minutes of inactivity.</div>
-</div>
 
-</div>
-<script>
-const $=id=>document.getElementById(id), enc=new TextEncoder(), dec=new TextDecoder();
-let idb=null, dek=null, urls=[], timer=null, index=[];
-const views=['setup','rec','login','forgot','vault'];
-function show(v){views.forEach(x=>$('v-'+x).classList.toggle('hide',x!==v))}
-const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
-const sb=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
-const sun=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-async function kdf(secret,salt){
- const k=await crypto.subtle.importKey('raw',enc.encode(secret),'PBKDF2',false,['deriveKey']);
- return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
-}
-async function seal(key,data){const iv=rnd(12);return{iv:sb(iv),ct:sb(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,data))}}
-const unseal=(key,o)=>crypto.subtle.decrypt({name:'AES-GCM',iv:sun(o.iv)},key,sun(o.ct));
-const dekKey=raw=>crypto.subtle.importKey('raw',raw,'AES-GCM',false,['encrypt','decrypt']);
-const normRec=s=>s.replace(/[^0-9a-fA-F]/g,'').toUpperCase();
-function newRec(){return Array.from(rnd(16),b=>b.toString(16).padStart(2,'0')).join('').toUpperCase().match(/.{4}/g).join('-')}
-async function encChunk(buf){const iv=rnd(12),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},dek,buf));const o=new Uint8Array(12+ct.length);o.set(iv);o.set(ct,12);return o}
-const decChunk=b=>crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},dek,b.slice(12));
+  <!-- DASHBOARD -->
+  <div class="vault-container" id="vaultView">
+    <div class="header-bar">
+      <div>
+        <h3 style="color: #38bdf8;">Cloud Photo Vault</h3>
+        <p style="font-size: 12px; color: #94a3b8;">Free Cloud Storage</p>
+      </div>
+      <button onclick="handleLogout()" style="width: auto; padding: 8px 16px; background: #475569;">Lock</button>
+    </div>
 
-/* Local encrypted storage (IndexedDB) */
-const opendb=()=>new Promise((res,rej)=>{const r=indexedDB.open('madhav_vault',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
-function kv(mode,fn){return new Promise((res,rej)=>{const t=idb.transaction('kv',mode),rq=fn(t.objectStore('kv'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=t.onabort=()=>rej(t.error)})}
-async function get(k){const v=await kv('readonly',s=>s.get(k));return v?new Uint8Array(v):null}
-const put=(k,u8)=>kv('readwrite',s=>s.put(u8,k));
-const del=k=>kv('readwrite',s=>s.delete(k)).catch(()=>{});
-async function getJ(k){const b=await get(k);return b?JSON.parse(dec.decode(b)):null}
-const putJ=(k,o)=>put(k,enc.encode(JSON.stringify(o)));
-const getMeta=()=>getJ('meta.json'), setMeta=m=>putJ('meta.json',m);
-async function loadIndex(){const o=await getJ('index.json');index=o?JSON.parse(dec.decode(await unseal(dek,o))):[]}
-async function saveIndex(){await putJ('index.json',await seal(dek,enc.encode(JSON.stringify(index))))}
+    <div class="card" style="max-width: 100%;">
+      <input type="file" id="fileInput" accept="image/*">
+      <button onclick="uploadPhoto()">Upload Photo to Cloud</button>
+      <p id="uploadStatus" class="status-text"></p>
+    </div>
 
-async function route(){try{show((await getMeta())?'login':'setup')}catch(x){document.querySelector('.wrap').innerHTML='<div class="box"><h1>⚠️ Storage unavailable</h1><p>This browser could not open private storage. Please use a normal (non-private) browser window.</p></div>'}}
+    <div class="gallery-grid" id="photoGallery"></div>
+  </div>
 
-/* Setup / login / reset */
-$('s-go').onclick=async()=>{
- const p=$('s-pw').value,p2=$('s-pw2').value,e=$('s-err');e.textContent='';
- if(p.length<8){e.textContent='Password must be at least 8 characters.';return}
- if(p!==p2){e.textContent='Passwords do not match.';return}
- $('s-go').disabled=true;e.textContent='Creating vault…';
- try{
-  const raw=rnd(32),s1=rnd(16),s2=rnd(16),rec=newRec();
-  await setMeta({s1:sb(s1),s2:sb(s2),pw:await seal(await kdf(p,s1),raw),rc:await seal(await kdf(normRec(rec),s2),raw)});
-  dek=await dekKey(raw);index=[];await saveIndex();
-  $('rec-key').textContent=rec;e.textContent='';show('rec');
- }catch(x){e.textContent='Something went wrong. Please try again.'}
- $('s-go').disabled=false;
-};
-$('rec-copy').onclick=async()=>{try{await navigator.clipboard.writeText($('rec-key').textContent);$('rec-copy').textContent='Copied ✓'}catch(e){$('rec-copy').textContent='Press and hold the key to select and copy'}};
-$('rec-ok').onchange=e=>$('rec-go').disabled=!e.target.checked;
-$('rec-go').onclick=()=>{$('rec-key').textContent='';enterVault()};
-async function login(){
- const e=$('l-err');e.textContent='';$('l-go').disabled=true;
- try{
-  const m=await getMeta();
-  let raw;try{raw=await unseal(await kdf($('l-pw').value,sun(m.s1)),m.pw)}catch(x){e.textContent='Wrong password.';$('l-go').disabled=false;return}
-  dek=await dekKey(raw);$('l-pw').value='';enterVault();
- }catch(x){e.textContent='Could not open the vault storage.'}
- $('l-go').disabled=false;
-}
-$('l-go').onclick=login;
-$('l-pw').onkeydown=e=>{if(e.key==='Enter')login()};
-$('l-forgot').onclick=()=>{$('l-err').textContent='';show('forgot')};
-$('f-back').onclick=()=>show('login');
-$('f-go').onclick=async()=>{
- const e=$('f-err'),p=$('f-pw').value,p2=$('f-pw2').value;e.textContent='';
- if(p.length<8){e.textContent='New password must be at least 8 characters.';return}
- if(p!==p2){e.textContent='Passwords do not match.';return}
- $('f-go').disabled=true;
- try{
-  const m=await getMeta();let raw;
-  try{raw=await unseal(await kdf(normRec($('f-rec').value),sun(m.s2)),m.rc)}
-  catch(x){e.textContent='Wrong recovery key.';$('f-go').disabled=false;return}
-  const s1=rnd(16);
-  await setMeta({...m,s1:sb(s1),pw:await seal(await kdf(p,s1),raw)});
-  dek=await dekKey(raw);['f-rec','f-pw','f-pw2'].forEach(i=>$(i).value='');enterVault();
- }catch(x){e.textContent='Could not reset. Please try again.'}
- $('f-go').disabled=false;
-};
+  <script>
+    // तुमची ImgBB API Key थेट जोडलेली आहे
+    const IMGBB_API_KEY = "0b61d186b1634f7eca045a72a950fa72";
 
-/* Vault */
-function resetTimer(){clearTimeout(timer);if(dek)timer=setTimeout(lock,300000)}
-['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,resetTimer,{passive:true}));
-function lock(){
- dek=null;index=[];clearTimeout(timer);urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
- $('grid').innerHTML='';$('lb').click();show('login');
-}
-$('lock').onclick=lock;
-function openLB(u){$('lb-img').src=u;$('lb').classList.remove('hide')}
-$('lb').onclick=()=>{$('lb').classList.add('hide');$('lb-img').removeAttribute('src')};
-const mb=n=>(n/1048576).toFixed(1)+' MB';
-function meter(){
- const t=index.reduce((a,f)=>a+f.size,0);
- $('meter').innerHTML='Stored on this device: '+(t>1073741824?(t/1073741824).toFixed(2)+' GB':mb(t))+' ('+index.length+' files)<span id="mtxt"></span><div style="height:6px;background:var(--bd);border-radius:6px;margin-top:6px;overflow:hidden"><div id="mbar" style="height:100%;width:0;background:var(--ac)"></div></div>';
- try{navigator.storage.estimate().then(e=>{if(e.quota){$('mbar').style.width=Math.min(100,(e.usage||0)/e.quota*100)+'%';$('mtxt').textContent=' · browser limit about '+(e.quota/1073741824).toFixed(1)+' GB'}}).catch(()=>{})}catch(x){}
-}
-async function enterVault(){welcome();show('vault');resetTimer();$('grid').textContent='Loading…';try{await loadIndex()}catch(x){$('u-err').textContent='Could not load your files list.'}renderGrid()}
-async function fetchFile(f){
- const parts=[];
- for(let i=0;i<f.n;i++){const b=await get('b/'+f.id+'/'+i);if(!b)throw 0;parts.push(new Uint8Array(await decChunk(b)))}
- return new Blob(parts,{type:f.type});
-}
-function renderGrid(){
- const g=$('grid');g.innerHTML='';urls.forEach(u=>URL.revokeObjectURL(u));urls=[];meter();
- $('empty').classList.toggle('hide',index.length>0);
- for(const f of index){
-  const d=document.createElement('div');d.className='item';
-  const box=document.createElement('div');d.append(box);
-  const load=async()=>{
-   box.textContent='Opening…';box.style.cssText='height:180px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px';
-   try{
-    const url=URL.createObjectURL(await fetchFile(f));urls.push(url);
-    const isV=f.type.startsWith('video'),media=document.createElement(isV?'video':'img');
-    media.src=url;
-    if(isV){media.controls=true;media.playsInline=true}else{media.alt=f.name;media.style.cursor='zoom-in';media.onclick=()=>openLB(url)}
-    box.style.cssText='';box.replaceChildren(media);
-   }catch(x){box.textContent='Could not load file'}
-  };
-  if(f.type.startsWith('video')){box.style.cssText='height:180px;display:flex;align-items:center;justify-content:center';
-   const pb=document.createElement('button');pb.textContent='▶ Play ('+mb(f.size)+')';pb.onclick=load;box.append(pb)}
-  else load();
-  const m=document.createElement('div');m.className='m';
-  const n=document.createElement('span');n.textContent=f.name;
-  const b=document.createElement('button');b.textContent='Delete';
-  b.onclick=async()=>{if(!confirm('Delete this file permanently?'))return;
-   try{index=index.filter(x=>x.id!==f.id);await saveIndex();for(let i=0;i<f.n;i++)await del('b/'+f.id+'/'+i)}catch(x){$('u-err').textContent='Could not delete the file.'}
-   renderGrid()};
-  m.append(n,b);d.append(m);g.append(d);
- }
-}
-const CH=8*1048576;
-$('up').onchange=async e=>{
- const err=$('u-err');err.style.color='var(--mut)';let bad=false;
- for(const file of e.target.files){
-  if(!/^(image|video)\//.test(file.type))continue;
-  const id=crypto.randomUUID(),n=Math.max(1,Math.ceil(file.size/CH));let done=0;
-  try{
-   for(let i=0;i<n;i++){
-    err.textContent='Saving '+file.name+' — part '+(i+1)+' of '+n+'. Please keep this page open.';
-    const buf=await file.slice(i*CH,(i+1)*CH).arrayBuffer();
-    await put('b/'+id+'/'+i,await encChunk(buf));done++;
-   }
-   index.unshift({id,name:file.name,type:file.type,size:file.size,ts:Date.now(),n});
-   await saveIndex();
-  }catch(x){
-   bad=true;err.style.color='var(--er)';err.textContent='"'+file.name+'" could not be saved. Your device storage may be full.';
-   for(let i=0;i<done;i++)await del('b/'+id+'/'+i);
-  }
- }
- if(!bad)err.textContent='';
- e.target.value='';renderGrid();
-};
+    // सीक्रेट PIN
+    const SECRET_PIN = "1234";
 
+    function handleLogin() {
+      const enteredPin = document.getElementById("pinInput").value;
+      const errorMsg = document.getElementById("loginError");
+      if (enteredPin === SECRET_PIN) {
+        errorMsg.style.display = "none";
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("vaultView").style.display = "block";
+        loadPhotos();
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
 
-document.querySelectorAll('.box input[type=password]').forEach(i=>{const w=document.createElement('div');w.className='pw';i.before(w);w.append(i);const b=document.createElement('button');b.type='button';b.className='eye';b.textContent='Show';b.onclick=()=>{const t=i.type==='password';i.type=t?'text':'password';b.textContent=t?'Hide':'Show'};w.append(b)});
-function endWelcome(){const w=$('welcome');clearTimeout(endWelcome.t);w.classList.add('out');setTimeout(()=>w.classList.add('hide'),600)}
-function welcome(){
- const w=$('welcome'),h=$('w-h');h.innerHTML='';let n=0;
- ['MADHAV','KADAM'].forEach((word,li)=>{const d=document.createElement('span');d.className='wl wl'+(li+1);[...word].forEach(ch=>{const c=document.createElement('span');c.className='c';c.textContent=ch;c.style.animationDelay=(0.6+n*0.09)+'s';n++;d.append(c)});h.append(d)});
- const hr=new Date().getHours();$('w-sub').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+' — your vault is unlocked';
- w.className='';clearTimeout(endWelcome.t);endWelcome.t=setTimeout(endWelcome,4800);
-}
-$('welcome').onclick=endWelcome;
-/* Start */
-(async()=>{
- if(!window.crypto||!crypto.subtle||!window.indexedDB){document.querySelector('.wrap').innerHTML='<div class="box"><h1>⚠️ Not supported</h1><p>Please open this page over https in a recent browser.</p></div>';return}
- try{idb=await opendb()}catch(x){route();return}
- route();
-})();
-</script>
+    function handleLogout() {
+      document.getElementById("pinInput").value = "";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("vaultView").style.display = "none";
+    }
+
+    async function uploadPhoto() {
+      const fileInput = document.getElementById("fileInput");
+      const status = document.getElementById("uploadStatus");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("कृपया आधी फोटो निवडा!");
+        return;
+      }
+
+      status.innerText = "क्लाउडवर अपलोड होत आहे...";
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          status.innerText = "अपलोड यशस्वी झाले!";
+          fileInput.value = "";
+          savePhotoUrl(data.data.url);
+          setTimeout(() => { status.innerText = ""; }, 2000);
+        } else {
+          status.innerText = "Error: " + data.error.message;
+        }
+      } catch (err) {
+        status.innerText = "अपलोड अयशस्वी: " + err.message;
+      }
+    }
+
+    function savePhotoUrl(url) {
+      let photos = JSON.parse(localStorage.getItem("vault_photos") || "[]");
+      photos.unshift(url);
+      localStorage.setItem("vault_photos", JSON.stringify(photos));
+      loadPhotos();
+    }
+
+    function loadPhotos() {
+      const gallery = document.getElementById("photoGallery");
+      let photos = JSON.parse(localStorage.getItem("vault_photos") || "[]");
+
+      gallery.innerHTML = "";
+      if (photos.length === 0) {
+        gallery.innerHTML = "<p style='color:#94a3b8; grid-column: 1/-1; text-align:center;'>अजून एकही फोटो नाही. नवीन फोटो अपलोड करा!</p>";
+        return;
+      }
+
+      photos.forEach((url, index) => {
+        const div = document.createElement("div");
+        div.className = "photo-item";
+        div.innerHTML = `
+          <img src="${url}">
+          <button class="delete-btn" onclick="deletePhoto(${index})">Delete</button>
+        `;
+        gallery.appendChild(div);
+      });
+    }
+
+    function deletePhoto(index) {
+      if (confirm("हा फोटो हटवायचा आहे का?")) {
+        let photos = JSON.parse(localStorage.getItem("vault_photos") || "[]");
+        photos.splice(index, 1);
+        localStorage.setItem("vault_photos", JSON.stringify(photos));
+        loadPhotos();
+      }
+    }
+  </script>
 </body>
 </html>
