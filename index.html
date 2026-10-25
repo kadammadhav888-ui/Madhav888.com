@@ -17,7 +17,20 @@
     .input-group { position: relative; width: 100%; margin-bottom: 14px; }
     input[type="password"], input[type="text"] { width: 100%; padding: 14px 44px 14px 16px; border-radius: 10px; border: 1px solid #374151; background: #030712; color: #fff; font-size: 15px; outline: none; }
     input:focus { border-color: #38bdf8; }
-    .eye-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
+    .eye-toggle { 
+      position: absolute; 
+      right: 12px; 
+      top: 50%; 
+      transform: translateY(-50%); 
+      cursor: pointer; 
+      user-select: none; 
+      font-size: 18px; 
+      padding: 6px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      z-index: 5;
+    }
 
     button { width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
     button:active { opacity: 0.9; }
@@ -175,12 +188,12 @@
     <h2>Welcome Madhav Kadam to Private Studio</h2>
     <p class="subtext">Enter secret password to access vault</p>
     
-    <form onsubmit="event.preventDefault(); unlockStudio();">
+    <form id="vaultLoginForm" onsubmit="handleFormLogin(event);">
       <div class="input-group">
-        <input type="password" id="passInput" placeholder="Enter Secret Password">
-        <span class="eye-toggle" onclick="toggleEye('passInput')">👁️</span>
+        <input type="password" id="passInput" placeholder="Enter Secret Password" autocomplete="current-password" autofocus>
+        <span class="eye-toggle" id="eye_passInput" onclick="toggleInputVisibility('passInput', 'eye_passInput')">👁️</span>
       </div>
-      <button type="submit">Unlock Studio</button>
+      <button type="submit" id="unlockButton">Unlock Studio</button>
       <button type="button" class="link-btn" onclick="openForgotModal()">Forgot Password?</button>
     </form>
     <p id="loginError" class="msg-box"></p>
@@ -197,7 +210,7 @@
       </div>
       <div class="input-group">
         <input type="password" id="resetNewPass" placeholder="Enter New Password">
-        <span class="eye-toggle" onclick="toggleEye('resetNewPass')">👁️</span>
+        <span class="eye-toggle" id="eye_resetNewPass" onclick="toggleInputVisibility('resetNewPass', 'eye_resetNewPass')">👁️</span>
       </div>
       
       <button type="button" onclick="handleMasterReset()">Reset Password</button>
@@ -216,7 +229,7 @@
       <button type="button" class="lock-btn" onclick="lockStudio()">Lock</button>
     </div>
 
-    <!-- 3 SEPARATE TABS: Vault, Trash, Settings -->
+    <!-- 3 SEPARATE TABS -->
     <div class="nav-tabs">
       <button type="button" class="tab-btn active" id="tabVault" onclick="switchMainTab('vault')">📁 Photos & Videos</button>
       <button type="button" class="tab-btn" id="tabTrash" onclick="switchMainTab('trash')">🗑️ Trash (<span id="trashCountBadge">0</span>)</button>
@@ -269,15 +282,15 @@
         <div class="settings-title">🔑 Change Password</div>
         <div class="input-group">
           <input type="password" id="settingOldPass" placeholder="Current Password">
-          <span class="eye-toggle" onclick="toggleEye('settingOldPass')">👁️</span>
+          <span class="eye-toggle" id="eye_settingOldPass" onclick="toggleInputVisibility('settingOldPass', 'eye_settingOldPass')">👁️</span>
         </div>
         <div class="input-group">
           <input type="password" id="settingNewPass" placeholder="New Password">
-          <span class="eye-toggle" onclick="toggleEye('settingNewPass')">👁️</span>
+          <span class="eye-toggle" id="eye_settingNewPass" onclick="toggleInputVisibility('settingNewPass', 'eye_settingNewPass')">👁️</span>
         </div>
         <div class="input-group">
           <input type="password" id="settingConfirmPass" placeholder="Confirm New Password">
-          <span class="eye-toggle" onclick="toggleEye('settingConfirmPass')">👁️</span>
+          <span class="eye-toggle" id="eye_settingConfirmPass" onclick="toggleInputVisibility('settingConfirmPass', 'eye_settingConfirmPass')">👁️</span>
         </div>
         <button type="button" onclick="saveNewPasswordSettings()">Update Password</button>
         <p id="settingPassMsg" class="msg-box"></p>
@@ -299,7 +312,7 @@
 
   <script>
     const MASTER_RECOVERY_KEY = "MADHAV-RESET";
-    const MAX_STORAGE_MB = 50; // Total storage display limit
+    const MAX_STORAGE_MB = 50;
 
     let currentPassword = localStorage.getItem("madhav_user_pass") || "1234";
     let myMedia = JSON.parse(localStorage.getItem("madhav_media_vault") || "[]");
@@ -307,27 +320,47 @@
     let activeTab = "vault";
     let isVaultUnlocked = false;
 
-    // Auto-Lock on minimizing or switching app
+    // Fixed Robust Eye Toggle
+    function toggleInputVisibility(inputId, iconId) {
+      const field = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!field) return;
+
+      if (field.type === "password") {
+        field.type = "text";
+        if (icon) icon.innerText = "🙈";
+      } else {
+        field.type = "password";
+        if (icon) icon.innerText = "👁️";
+      }
+    }
+
+    // Auto-Lock on App Minimize
     document.addEventListener("visibilitychange", function() {
       if (document.hidden && isVaultUnlocked) {
         lockStudio();
       }
     });
 
-    function toggleEye(id) {
-      const f = document.getElementById(id);
-      f.type = (f.type === "password") ? "text" : "password";
+    // Form Login Trigger
+    function handleFormLogin(e) {
+      if (e) e.preventDefault();
+      unlockStudio();
     }
 
-    // Login Unlock with 10s Animation
+    // Login Unlock Function
     function unlockStudio() {
-      const val = document.getElementById("passInput").value.trim();
+      const passField = document.getElementById("passInput");
       const err = document.getElementById("loginError");
+      if (!passField) return;
+
+      const val = passField.value.trim();
 
       if (val === currentPassword) {
-        err.style.display = "none";
+        if (err) err.style.display = "none";
         document.getElementById("loginBox").style.display = "none";
         
+        // 10s Animation Trigger
         const anim = document.getElementById("welcomeOverlay");
         const countdownLabel = document.getElementById("animCountdown");
         anim.style.display = "flex";
@@ -351,22 +384,25 @@
           isVaultUnlocked = true;
           switchMainTab("vault");
           refreshAllData();
-        }, 10000); // 10 seconds duration
+        }, 10000);
 
       } else {
-        err.innerText = "Incorrect Password! Please try again.";
-        err.style.display = "block";
+        if (err) {
+          err.innerText = "Incorrect Password! Please try again.";
+          err.style.display = "block";
+        }
       }
     }
 
     function lockStudio() {
       document.getElementById("vaultView").style.display = "none";
       document.getElementById("loginBox").style.display = "block";
-      document.getElementById("passInput").value = "";
+      const passField = document.getElementById("passInput");
+      if (passField) passField.value = "";
       isVaultUnlocked = false;
     }
 
-    // Switch Tabs: Photos & Videos / Trash / Settings
+    // Tab Navigation
     function switchMainTab(tab) {
       activeTab = tab;
       document.getElementById("tabVault").className = tab === "vault" ? "tab-btn active" : "tab-btn";
@@ -385,22 +421,26 @@
       refreshAllData();
     }
 
-    // Live Storage Calculation (Setting Tab me dikhane ke liye)
+    // Storage Calculation
     function calculateStorageDetails() {
-      const fullPayload = JSON.stringify(myMedia) + JSON.stringify(trashMedia);
-      const usedBytes = new Blob([fullPayload]).size;
-      const usedMB = (usedBytes / (1024 * 1024)).toFixed(2);
-      const freeMB = Math.max(0, (MAX_STORAGE_MB - usedMB)).toFixed(2);
-      const percent = Math.min(100, ((usedMB / MAX_STORAGE_MB) * 100)).toFixed(1);
+      try {
+        const fullPayload = JSON.stringify(myMedia) + JSON.stringify(trashMedia);
+        const usedBytes = new Blob([fullPayload]).size;
+        const usedMB = (usedBytes / (1024 * 1024)).toFixed(2);
+        const freeMB = Math.max(0, (MAX_STORAGE_MB - usedMB)).toFixed(2);
+        const percent = Math.min(100, ((usedMB / MAX_STORAGE_MB) * 100)).toFixed(1);
 
-      document.getElementById("settingUsedText").innerText = `${usedMB} MB (${percent}%)`;
-      document.getElementById("settingFreeText").innerText = `${freeMB} MB`;
-      document.getElementById("settingMediaCount").innerText = `${myMedia.length + trashMedia.length} Items`;
-      document.getElementById("settingProgressBar").style.width = percent + "%";
-      document.getElementById("trashCountBadge").innerText = trashMedia.length;
+        document.getElementById("settingUsedText").innerText = `${usedMB} MB (${percent}%)`;
+        document.getElementById("settingFreeText").innerText = `${freeMB} MB`;
+        document.getElementById("settingMediaCount").innerText = `${myMedia.length + trashMedia.length} Items`;
+        document.getElementById("settingProgressBar").style.width = percent + "%";
+        document.getElementById("trashCountBadge").innerText = trashMedia.length;
+      } catch(e) {
+        console.error("Storage Calculation Error:", e);
+      }
     }
 
-    // Upload Media (Image & Video)
+    // Media Upload
     function handleMediaUpload() {
       const input = document.getElementById("mediaChooser");
       const status = document.getElementById("uploadStatus");
@@ -419,33 +459,4 @@
           name: file.name || (isVideo ? "video.mp4" : "photo.jpg")
         });
         localStorage.setItem("madhav_media_vault", JSON.stringify(myMedia));
-        refreshAllData();
-        status.innerText = "Auto-Saved to Vault!";
-        setTimeout(() => { status.innerText = "Photos & Videos Auto-Saved"; }, 2000);
-      };
-      reader.readAsDataURL(file);
-      input.value = "";
-    }
-
-    function refreshAllData() {
-      calculateStorageDetails();
-      renderVaultGallery();
-      renderTrashGallery();
-    }
-
-    // Render Vault Gallery
-    function renderVaultGallery() {
-      const cont = document.getElementById("mediaContainer");
-      cont.innerHTML = "";
-
-      if (myMedia.length === 0) {
-        cont.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b; padding:24px;">No active photos or videos.</p>`;
-        return;
-      }
-
-      myMedia.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "media-item";
-        const mediaTag = item.type === "video" 
-          ? `<video src="${item.src}" controls playsinline preload="metadata"></video><span class="media-badge">🎬 Video</span>`
-          : `<img src="${item.src}"><span cl
+        r
