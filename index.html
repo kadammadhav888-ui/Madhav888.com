@@ -1,462 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Private Studio - Madhav Kadam</title>
-  
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: #070b14; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; margin: 0; }
-    
-    /* Login & Modal Cards */
-    .card { background: #111827; border: 1px solid #1f2937; border-radius: 18px; width: 100%; max-width: 440px; padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); text-align: center; }
-    h2 { font-size: 19px; color: #38bdf8; font-weight: 700; margin-bottom: 6px; }
-    p.subtext { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
-    
-    .input-group { position: relative; width: 100%; margin-bottom: 14px; }
-    input[type="password"], input[type="text"] { width: 100%; padding: 14px 44px 14px 16px; border-radius: 10px; border: 1px solid #374151; background: #030712; color: #fff; font-size: 15px; outline: none; }
-    input:focus { border-color: #38bdf8; }
-    .eye-toggle { 
-      position: absolute; 
-      right: 12px; 
-      top: 50%; 
-      transform: translateY(-50%); 
-      cursor: pointer; 
-      user-select: none; 
-      font-size: 18px; 
-      padding: 6px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      z-index: 5;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Private Studio - Madhav Kadam</title>
+<style>
+:root{color-scheme:dark;--bg:#070b14;--card:#0e1524;--tx:#e8f0ff;--mut:#8a9bb8;--ac:#22d3ee;--ac2:#04101c;--bd:#1b2a44;--er:#ff6b6b;--ok:#34d399;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif;line-height:1.5}
+.wrap{max-width:960px;margin:0 auto;padding:20px 16px}
+.box{max-width:420px;margin:8vh auto 0;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:26px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:18px;margin:0}
+p{color:var(--mut);margin:6px 0 14px;font-size:14px}
+input[type=password],input[type=text]{width:100%;padding:12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font-size:16px}
+button,.btn{background:var(--ac);color:var(--ac2);border:0;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:600;cursor:pointer;display:inline-block}
+button.full{width:100%}
+button.ghost{background:transparent;color:var(--ac);padding:8px 0;font-weight:500}
+button.sec{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+.err{color:var(--er);font-size:14px;min-height:20px;margin:4px 0}
+.rec{font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:1px;background:var(--bg);border:1px dashed var(--ac);border-radius:10px;padding:14px;text-align:center;word-break:break-all;margin:10px 0;user-select:all}
+.hide{display:none!important}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.item{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.item img,.item video{width:100%;height:180px;object-fit:cover;display:block;background:#000}
+.item .m{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;font-size:12px;color:var(--mut);gap:6px}
+.item .m span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .m button{padding:4px 9px;font-size:12px;background:transparent;color:var(--er);border:1px solid var(--bd)}
+.empty{text-align:center;color:var(--mut);padding:50px 10px;border:1px dashed var(--bd);border-radius:12px}
+label.chk{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin:10px 0}
+.note{font-size:12px;color:var(--mut);margin-top:16px}
 
-    button { width: 100%; padding: 13px; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; }
-    button:active { opacity: 0.9; }
-    .btn-secondary { background: #1f2937; border: 1px solid #374151; font-size: 13px; padding: 10px 14px; border-radius: 8px; color: #cbd5e1; }
-    .link-btn { background: none; border: none; color: #38bdf8; font-size: 13px; margin-top: 14px; cursor: pointer; text-decoration: underline; width: 100%; }
-    .msg-box { font-size: 13px; text-align: center; margin-top: 10px; display: none; color: #ef4444; font-weight: 600; }
-    
-    /* 10-SECOND CINEMATIC ANIMATION OVERLAY */
-    #welcomeOverlay { 
-      display: none; 
-      position: fixed; 
-      inset: 0; 
-      background: radial-gradient(circle at center, #0b1528 0%, #030712 100%); 
-      z-index: 99999; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 24px;
-    }
-    .holo-ring {
-      width: 110px;
-      height: 110px;
-      border: 3px dashed #38bdf8;
-      border-top-color: #ec4899;
-      border-bottom-color: #818cf8;
-      border-radius: 50%;
-      animation: spinRing 2.5s linear infinite;
-      margin-bottom: 24px;
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
-    }
-    .welcome-text { 
-      font-size: 24px; 
-      font-weight: 900; 
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #38bdf8 0%, #a855f7 50%, #f43f5e 100%);
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-      text-align: center; 
-      animation: neonFlicker 2s ease-in-out infinite alternate;
-    }
-    .welcome-sub { 
-      margin-top: 10px; 
-      color: #94a3b8; 
-      font-size: 13px; 
-      letter-spacing: 3px; 
-      text-transform: uppercase;
-    }
-    .anim-bar-box {
-      width: 80%;
-      max-width: 280px;
-      height: 6px;
-      background: #1e293b;
-      border-radius: 4px;
-      margin-top: 24px;
-      overflow: hidden;
-      border: 1px solid #334155;
-    }
-    .anim-bar-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #38bdf8, #818cf8, #ec4899);
-      animation: fillTenSeconds 10s linear forwards;
-    }
-    .anim-timer {
-      margin-top: 10px;
-      font-size: 12px;
-      color: #64748b;
-      font-family: monospace;
-    }
+body{background:radial-gradient(1100px 520px at 50% -10%,color-mix(in srgb,var(--ac) 20%,transparent),transparent),var(--bg);min-height:100vh}
+.box{box-shadow:0 12px 44px rgba(20,30,70,.14);border-radius:20px;padding:34px 28px;animation:rise .5s ease both}
+.box p{text-align:center}
+.brand{text-align:center;margin-bottom:16px}
+.logo{width:64px;height:64px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--ac),#7c4dff);box-shadow:0 8px 24px rgba(70,90,230,.35)}
+.brand h1{font-size:23px;margin:0;letter-spacing:.2px}
+.brand span{color:var(--mut);font-size:13px}
+input:focus{outline:2px solid var(--ac);border-color:transparent}
+button:hover{filter:brightness(1.08)}button:active{transform:scale(.98)}
+.pw{position:relative}.pw input{padding-right:70px}
+.eye{position:absolute;right:6px;top:6px;background:transparent;color:var(--ac);padding:6px 10px;font-size:13px;font-weight:600}
+.sec{margin-top:18px;text-align:center;font-size:12px;color:var(--mut)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.4) rotate(-20deg)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important}}
 
-    @keyframes spinRing {
-      0% { transform: rotate(0deg) scale(0.95); }
-      50% { transform: rotate(180deg) scale(1.05); }
-      100% { transform: rotate(360deg) scale(0.95); }
-    }
-    @keyframes neonFlicker {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(56,189,248,0.7)); }
-      50% { filter: drop-shadow(0 0 25px rgba(236,72,153,0.9)); }
-    }
-    @keyframes fillTenSeconds {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
+#welcome{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:#fff;text-align:center;padding:20px;background:linear-gradient(120deg,#070a24,#1b2a7a,#4b2a9a,#0a1240);background-size:300% 300%;animation:bgmove 6s ease infinite;transition:opacity .7s}
+#welcome.out{opacity:0}
+#welcome>*{position:relative;z-index:2}
+#welcome .ring,#welcome .orb{position:absolute;z-index:1}
+#welcome .ring{width:min(92vw,640px);aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,255,255,.1);border-top-color:rgba(160,180,255,.95);animation:spin 3s linear infinite,fadein 1s ease both}
+#welcome .ring.r2{width:min(72vw,470px);border-top-color:rgba(192,140,255,.95);animation:spin 2.2s linear infinite reverse,fadein 1.4s ease both}
+#welcome .orb{width:260px;height:260px;border-radius:50%;filter:blur(70px);opacity:.45;animation:float 5s ease-in-out infinite}
+.orb.o1{background:#4f6bff;left:-60px;top:10%}.orb.o2{background:#9b5cff;right:-60px;bottom:8%;animation-delay:-2s}
+.wlogo{width:84px;height:84px;border-radius:24px;margin-bottom:22px;animation:pop .9s cubic-bezier(.2,1.4,.4,1) both}
+.wk{letter-spacing:.5em;font-size:13px;color:#b9c4ff;margin-bottom:16px;opacity:0;animation:fadein 1s ease .3s forwards}
+#w-h{margin:0;font-weight:800;line-height:1.05;font-size:clamp(46px,14vw,120px);letter-spacing:.06em}
+.wl{display:block}
+.wl .c{display:inline-block;opacity:0;transform:translateY(46px) scale(.7);filter:blur(12px);animation:drop .7s cubic-bezier(.2,1.2,.3,1) forwards;color:#fff;text-shadow:0 0 30px rgba(140,160,255,.55)}
+.wl2 .c{color:#ffe0b3;text-shadow:0 0 30px rgba(255,190,120,.5)}
+#w-line{height:3px;width:0;margin:22px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#8fa5ff,#c08bff,transparent);animation:grow 1.2s ease 2s forwards}
+#w-sub{opacity:0;margin-top:16px;color:#c5cdf5;font-size:15px;animation:fadein .9s ease 2.5s forwards}
+@keyframes drop{to{opacity:1;transform:none;filter:none}}
+@keyframes bgmove{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes grow{to{width:min(70vw,380px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
 
-    /* Vault View */
-    #vaultView { display: none; width: 100%; max-width: 500px; }
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .lock-btn { width: auto; padding: 6px 14px; font-size: 13px; background: #1f2937; border-radius: 8px; border: 1px solid #374151; }
-
-    /* Top Navigation Tabs */
-    .nav-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-    .tab-btn { flex: 1; padding: 10px 6px; border-radius: 10px; background: #111827; border: 1px solid #1f2937; color: #94a3b8; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
-    .tab-btn.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
-
-    /* Settings Page Section */
-    .settings-panel { display: none; }
-    .settings-group { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: left; }
-    .settings-title { font-size: 15px; font-weight: 700; color: #38bdf8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .storage-stat-row { display: flex; justify-content: space-between; font-size: 13px; color: #cbd5e1; margin-bottom: 8px; }
-    .progress-bar { width: 100%; height: 10px; background: #1f2937; border-radius: 5px; overflow: hidden; margin-top: 10px; }
-    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #3b82f6); transition: 0.3s; }
-
-    /* Upload Box */
-    .upload-card { background: #111827; border: 1px dashed #38bdf8; border-radius: 16px; padding: 18px; text-align: center; margin-bottom: 18px; }
-    input[type="file"] { display: none; }
-    .file-btn { display: inline-block; width: 100%; padding: 12px; background: #0284c7; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; color: #fff; }
-    #uploadStatus { font-size: 13px; margin-top: 10px; color: #38bdf8; }
-
-    /* Gallery Grid */
-    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .media-item { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #1f2937; border: 1px solid #374151; }
-    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; }
-    .media-badge { position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.75); font-size: 11px; padding: 2px 6px; border-radius: 4px; color: #38bdf8; }
-    
-    /* Top Action Buttons on Media Card */
-    .card-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 5px; z-index: 10; }
-    .action-btn { 
-      background: rgba(15, 23, 42, 0.85); 
-      color: #fff; 
-      border: 1px solid #334155; 
-      width: 30px; 
-      height: 30px; 
-      border-radius: 50%; 
-      font-size: 13px; 
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      transition: 0.2s;
-    }
-    .action-btn:active { transform: scale(0.9); }
-    .download-btn { color: #38bdf8; border-color: #0284c7; }
-    .delete-btn { color: #f87171; border-color: #ef4444; }
-    .restore-btn { color: #34d399; border-color: #10b981; }
-
-    /* Modals */
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
-  </style>
+.tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto}
+.tab{background:var(--card);color:var(--mut);border:1px solid var(--bd);white-space:nowrap}
+.tab.on{background:var(--ac);color:var(--ac2)}
+.tab b{background:var(--er);color:#fff;border-radius:10px;padding:1px 7px;font-size:12px;margin-left:4px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h3{margin:0 0 12px;font-size:16px}
+.row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
+.meter{height:8px;background:var(--bd);border-radius:8px;margin-top:10px;overflow:hidden}.meter div{height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#8b5cf6)}
+.item .m .dl{color:var(--ac)}
+#w-bar{width:min(70vw,380px);height:6px;background:rgba(255,255,255,.15);border-radius:6px;margin:24px auto 0;overflow:hidden}
+#w-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#8b5cf6);animation:fill 10s linear forwards}
+@keyframes fill{to{width:100%}}
+#w-sub{animation-delay:.8s}
+</style>
 </head>
 <body>
+<div id="lb" class="hide" style="position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:50;display:flex;align-items:center;justify-content:center"><img id="lb-img" alt="" style="max-width:100%;max-height:100%;object-fit:contain"><button id="lb-x" style="position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px">✕ Close</button></div>
+<div id="welcome" class="hide"><div class="orb o1"></div><div class="orb o2"></div><div class="ring"></div><div class="ring r2"></div><div class="logo wlogo"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="wk">WELCOME</div><h2 id="w-h"></h2><div id="w-bar"><i></i></div><div id="w-sub"></div></div>
+<div class="wrap">
 
-  <!-- 10 SECONDS CINEMATIC ANIMATION -->
-  <div id="welcomeOverlay">
-    <div class="holo-ring"></div>
-    <div class="welcome-text">WELCOME MADHAV KADAM</div>
-    <div class="welcome-sub">Authenticating Secure Vault</div>
-    <div class="anim-bar-box">
-      <div class="anim-bar-fill"></div>
-    </div>
-    <div class="anim-timer" id="animCountdown">Decentralized Decryption... 10s</div>
+<div id="v-conn" class="box hide">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h1>Private Studio</h1><span>Madhav Kadam · encrypted vault</span></div>
+  <p>Create a new vault, or open the vault you already made on another phone.</p>
+  <button class="full" id="c-new">Create new vault</button>
+  <p style="margin:18px 0 8px">or open an existing vault</p>
+  <input type="text" id="c-vid" placeholder="Vault ID" autocomplete="off">
+  <div class="err" id="c-err"></div>
+  <button class="sec full" id="c-open">Open existing vault</button>
+</div>
+
+<div id="v-setup" class="box hide">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h1>Private Studio</h1><span>Madhav Kadam · encrypted vault</span></div>
+  <p>Create a password to get started. Your photos and videos are encrypted on your device before they are saved, so nobody can view them without your password.</p>
+  <input type="password" id="s-pw" placeholder="New password (at least 8 characters)" autocomplete="new-password">
+  <input type="password" id="s-pw2" placeholder="Confirm password" autocomplete="new-password">
+  <div class="err" id="s-err"></div>
+  <button class="full" id="s-go">Create vault</button>
+</div>
+
+<div id="v-rec" class="box hide">
+  <h1>🔑 Save your recovery key</h1>
+  <p>If you forget your password, this key is the only way to get your data back. Write it down or save it somewhere safe. It will not be shown again.</p>
+  <div class="rec" id="rec-key"></div>
+  <p style="margin:2px 0">Your Vault ID (needed to open this vault on other phones):</p>
+  <div class="rec" id="rec-vid" style="font-size:14px"></div>
+  <button class="sec full" id="rec-copy">Copy link, Vault ID &amp; key</button>
+  <label class="chk"><input type="checkbox" id="rec-ok"> I have saved my recovery key safely</label>
+  <button class="full" id="rec-go" disabled>Continue</button>
+</div>
+
+<div id="v-login" class="box hide">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h1>Private Studio</h1><span>Madhav Kadam · encrypted vault</span></div>
+  <p>Welcome back. Enter your password to unlock your vault.</p>
+  <input type="password" id="l-pw" placeholder="Password" autocomplete="current-password">
+  <div class="err" id="l-err"></div>
+  <button class="full" id="l-go">Unlock</button>
+  <button class="ghost" id="l-forgot">Forgot password?</button><br><button class="ghost" id="l-diff" style="font-size:13px;color:var(--mut)">Use a different vault</button><div class="sec">🔐 AES-256 encryption · Your files are encrypted on your device</div>
+</div>
+
+<div id="v-forgot" class="box hide">
+  <h1>Reset password</h1>
+  <p>Enter your recovery key and a new password.</p>
+  <input type="text" id="f-rec" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" autocomplete="off">
+  <input type="password" id="f-pw" placeholder="New password (at least 8 characters)" autocomplete="new-password">
+  <input type="password" id="f-pw2" placeholder="Confirm new password" autocomplete="new-password">
+  <div class="err" id="f-err"></div>
+  <button class="full" id="f-go">Reset password</button>
+  <button class="ghost" id="f-back">← Back</button>
+</div>
+
+<div id="v-vault" class="hide">
+  <div class="bar"><h2>🔓 Private Studio</h2><button class="sec" id="lock">🔒 Lock</button></div>
+  <div class="tabs"><button class="tab on" id="t-media">📁 Photos &amp; Videos</button><button class="tab" id="t-trash">🗑️ Trash <b id="tb">0</b></button><button class="tab" id="t-set">⚙️ Settings</button></div>
+  <div id="p-media">
+    <div class="bar"><div id="meter" class="note" style="margin:0"></div><div><label class="btn" id="up-l" for="up">+ Add photos / videos</label><input type="file" id="up" accept="image/*,video/*" multiple class="hide"></div></div>
+    <div class="err" id="u-err"></div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty hide">No files yet. Add photos or videos using the button above.</div>
   </div>
-
-  <!-- 1. LOGIN SCREEN -->
-  <div class="card" id="loginBox">
-    <h2>Welcome Madhav Kadam to Private Studio</h2>
-    <p class="subtext">Enter secret password to access vault</p>
-    
-    <form id="vaultLoginForm" onsubmit="handleFormLogin(event);">
-      <div class="input-group">
-        <input type="password" id="passInput" placeholder="Enter Secret Password" autocomplete="current-password" autofocus>
-        <span class="eye-toggle" id="eye_passInput" onclick="toggleInputVisibility('passInput', 'eye_passInput')">👁️</span>
-      </div>
-      <button type="submit" id="unlockButton">Unlock Studio</button>
-      <button type="button" class="link-btn" onclick="openForgotModal()">Forgot Password?</button>
-    </form>
-    <p id="loginError" class="msg-box"></p>
+  <div id="p-trash" class="hide"><div id="tgrid" class="grid"></div><div id="tempty" class="empty hide">Trash is empty.</div></div>
+  <div id="p-set" class="hide">
+    <div class="card"><h3>Storage</h3><div class="row"><span>Used</span><b id="s-used">-</b></div><div class="row"><span>Free (of 1 GB free plan)</span><b id="s-free">-</b></div><div class="meter"><div id="s-bar"></div></div><div class="row" style="margin-top:12px"><span>Vault ID</span><button class="sec" id="s-cv" style="padding:5px 10px;font-size:12px">Copy</button></div><div id="s-vid" style="font-size:12px;word-break:break-all;color:var(--mut)"></div><div class="row" style="margin-top:12px"><span>Private link for another phone</span><button class="sec" id="s-cl" style="padding:5px 10px;font-size:12px">Copy link</button></div><p style="text-align:left;font-size:12px;margin:4px 0 0">Open this link on the other phone, then enter your password. Keep the link private.</p></div>
+    <div class="card"><h3>Change password</h3>
+      <input type="password" id="pc-cur" placeholder="Current password" autocomplete="current-password">
+      <input type="password" id="pc-new" placeholder="New password (at least 8 characters)" autocomplete="new-password">
+      <input type="password" id="pc-new2" placeholder="Confirm new password" autocomplete="new-password">
+      <div class="err" id="pc-msg"></div><button id="pc-go">Update password</button></div>
+    <div class="card"><h3>Backup &amp; restore (Google Drive)</h3>
+      <p style="text-align:left">The backup file is encrypted, so it is safe to store on Google Drive. To restore, enter the password of the vault the backup came from.</p>
+      <button id="bk-dr">☁️ Save backup to Google Drive</button> <button class="sec" id="bk-ex">⬇️ Download backup file</button>
+      <input type="password" id="bk-pw" placeholder="Backup password (for restore)" autocomplete="off" style="margin-top:12px">
+      <label class="btn sec" for="bk-file" style="background:var(--bg);color:var(--tx);border:1px solid var(--bd)">⬆️ Restore from backup</label><input type="file" id="bk-file" accept=".vault" class="hide">
+      <div class="err" id="bk-msg"></div></div>
   </div>
+  <div class="note">Files are stored encrypted in the cloud, so only your password can open them. Keep your Vault ID private. The vault locks after 5 minutes of inactivity or when you leave this tab.</div>
+</div>
 
-  <!-- 2. FORGOT PASSWORD MODAL (Master Recovery: MADHAV-RESET) -->
-  <div class="modal-backdrop" id="forgotModal">
-    <div class="card">
-      <h2>🔑 Reset Password</h2>
-      <p class="subtext">Master Code: <strong>MADHAV-RESET</strong></p>
-      
-      <div class="input-group">
-        <input type="text" id="masterCodeInput" placeholder="Enter Master Code">
-      </div>
-      <div class="input-group">
-        <input type="password" id="resetNewPass" placeholder="Enter New Password">
-        <span class="eye-toggle" id="eye_resetNewPass" onclick="toggleInputVisibility('resetNewPass', 'eye_resetNewPass')">👁️</span>
-      </div>
-      
-      <button type="button" onclick="handleMasterReset()">Reset Password</button>
-      <button type="button" class="link-btn" onclick="closeForgotModal()">Back to Login</button>
-      <p id="forgotMsg" class="msg-box"></p>
-    </div>
-  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id), enc=new TextEncoder(), dec=new TextDecoder();
+let vid=null, dek=null, urls=[], timer=null, index=[];
+const views=['conn','setup','rec','login','forgot','vault'];
+function show(v){views.forEach(x=>$('v-'+x).classList.toggle('hide',x!==v))}
+const rnd=n=>crypto.getRandomValues(new Uint8Array(n));
+const sb=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const sun=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function kdf(secret,salt){
+ const k=await crypto.subtle.importKey('raw',enc.encode(secret),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function seal(key,data){const iv=rnd(12);return{iv:sb(iv),ct:sb(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,data))}}
+const unseal=(key,o)=>crypto.subtle.decrypt({name:'AES-GCM',iv:sun(o.iv)},key,sun(o.ct));
+const dekKey=raw=>crypto.subtle.importKey('raw',raw,'AES-GCM',false,['encrypt','decrypt']);
+const normRec=s=>s.replace(/[^0-9a-fA-F]/g,'').toUpperCase();
+function newRec(){return Array.from(rnd(16),b=>b.toString(16).padStart(2,'0')).join('').toUpperCase().match(/.{4}/g).join('-')}
+async function encChunk(buf){const iv=rnd(12),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},dek,buf));const o=new Uint8Array(12+ct.length);o.set(iv);o.set(ct,12);return o}
+const decChunk=b=>crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},dek,b.slice(12));
 
-  <!-- 3. MAIN DASHBOARD VIEW -->
-  <div id="vaultView">
-    <div class="header-bar">
-      <div>
-        <h3 style="color: #38bdf8; font-size: 18px;">Madhav's Studio</h3>
-        <p style="font-size: 12px; color: #94a3b8;" id="headerSubtitle">Active Vault</p>
-      </div>
-      <button type="button" class="lock-btn" onclick="lockStudio()">Lock</button>
-    </div>
+/* Cloud storage: Firebase Realtime Database (REST). Everything stored is already encrypted. */
+const DB='https://kadam-valut-default-rtdb.firebaseio.com';
+const bigb=u=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(new Blob([u]))});
+function bigun(s){const t=atob(s),u=new Uint8Array(t.length);for(let i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return u}
+const furl=k=>DB+'/vaults/'+vid+'/'+k+'.json';
+async function get(k){const r=await fetch(furl(k));if(!r.ok)throw new Error('HTTP '+r.status);const v=await r.json();return v?bigun(v):null}
+async function put(k,u8){const r=await fetch(furl(k),{method:'PUT',body:JSON.stringify(await bigb(u8))});if(!r.ok)throw new Error('HTTP '+r.status)}
+const del=k=>fetch(furl(k),{method:'DELETE'}).catch(()=>{});
+async function getJ(k){const b=await get(k);return b?JSON.parse(dec.decode(b)):null}
+const putJ=(k,o)=>put(k,enc.encode(JSON.stringify(o)));
+const getMeta=()=>getJ('meta'), setMeta=m=>putJ('meta',m);
+async function loadIndex(){const o=await getJ('index');index=o?JSON.parse(dec.decode(await unseal(dek,o))):[]}
+async function saveIndex(){await putJ('index',await seal(dek,enc.encode(JSON.stringify(index))))}
 
-    <!-- 3 SEPARATE TABS -->
-    <div class="nav-tabs">
-      <button type="button" class="tab-btn active" id="tabVault" onclick="switchMainTab('vault')">📁 Photos & Videos</button>
-      <button type="button" class="tab-btn" id="tabTrash" onclick="switchMainTab('trash')">🗑️ Trash (<span id="trashCountBadge">0</span>)</button>
-      <button type="button" class="tab-btn" id="tabSettings" onclick="switchMainTab('settings')">⚙️ Settings</button>
-    </div>
+async function route(){try{show((await getMeta())?'login':'setup')}catch(x){vid=null;$('c-err').textContent='Could not reach the cloud. Check your internet connection.';show('conn')}}
 
-    <!-- TAB 1: ACTIVE VAULT (PHOTOS & VIDEOS) -->
-    <div id="viewVault">
-      <div class="upload-card">
-        <label class="file-btn" for="mediaChooser">📷 Upload Photo or Video</label>
-        <input type="file" id="mediaChooser" accept="image/*,video/*" onchange="handleMediaUpload()">
-        <div id="uploadStatus">Photos & Videos Auto-Saved</div>
-      </div>
-      <div class="gallery-grid" id="mediaContainer"></div>
-    </div>
+$('c-new').onclick=()=>{vid=Array.from(rnd(20),b=>'abcdefghjkmnpqrstuvwxyz23456789'[b%31]).join('');show('setup')};
+$('c-open').onclick=async()=>{
+ const v=$('c-vid').value.trim().toLowerCase(),e=$('c-err');e.textContent='';
+ if(v.length<20){e.textContent='Enter the full Vault ID.';return}
+ vid=v;e.textContent='Connecting…';
+ try{
+  if(!(await getMeta())){vid=null;e.textContent='No vault found with this ID.';return}
+  try{localStorage.setItem('mpd_vid',vid)}catch(x){}
+  e.textContent='';show('login');
+ }catch(x){vid=null;e.textContent='Could not reach the cloud. Check your internet connection.'}
+};
+/* Setup / login / reset */
+$('s-go').onclick=async()=>{
+ const p=$('s-pw').value,p2=$('s-pw2').value,e=$('s-err');e.textContent='';
+ if(p.length<8){e.textContent='Password must be at least 8 characters.';return}
+ if(p!==p2){e.textContent='Passwords do not match.';return}
+ $('s-go').disabled=true;e.textContent='Creating vault…';
+ try{
+  const raw=rnd(32),s1=rnd(16),s2=rnd(16),rec=newRec();
+  await setMeta({s1:sb(s1),s2:sb(s2),pw:await seal(await kdf(p,s1),raw),rc:await seal(await kdf(normRec(rec),s2),raw)});
+  dek=await dekKey(raw);index=[];await saveIndex();
+  $('rec-key').textContent=rec;$('rec-vid').textContent=vid;try{localStorage.setItem('mpd_vid',vid)}catch(x){}e.textContent='';show('rec');
+ }catch(x){e.textContent='Could not save to the cloud. Check your internet connection and the database rules. ('+(x&&x.message||x)+')'}
+ $('s-go').disabled=false;
+};
+$('rec-copy').onclick=async()=>{try{await navigator.clipboard.writeText('Private link: '+mylink()+'\nVault ID: '+vid+'\nRecovery key: '+$('rec-key').textContent);$('rec-copy').textContent='Copied ✓'}catch(e){$('rec-copy').textContent='Press and hold the key to select and copy'}};
+$('rec-ok').onchange=e=>$('rec-go').disabled=!e.target.checked;
+$('rec-go').onclick=()=>{$('rec-key').textContent='';$('rec-vid').textContent='';enterVault()};
+async function login(){
+ const e=$('l-err');e.style.color='';e.textContent='';$('l-go').disabled=true;
+ try{
+  const m=await getMeta();
+  let raw;try{raw=await unseal(await kdf($('l-pw').value,sun(m.s1)),m.pw)}catch(x){e.textContent='Wrong password.';$('l-go').disabled=false;return}
+  dek=await dekKey(raw);$('l-pw').value='';enterVault();
+ }catch(x){e.textContent='Could not open the vault storage.'}
+ $('l-go').disabled=false;
+}
+$('l-go').onclick=login;
+$('l-pw').onkeydown=e=>{if(e.key==='Enter')login()};
+$('l-diff').onclick=()=>{try{localStorage.removeItem('mpd_vid')}catch(x){}vid=null;$('c-err').textContent='';show('conn')};
+$('l-forgot').onclick=()=>{$('l-err').textContent='';show('forgot')};
+$('f-back').onclick=()=>show('login');
+$('f-go').onclick=async()=>{
+ const e=$('f-err'),p=$('f-pw').value,p2=$('f-pw2').value;e.textContent='';
+ if(p.length<8){e.textContent='New password must be at least 8 characters.';return}
+ if(p!==p2){e.textContent='Passwords do not match.';return}
+ $('f-go').disabled=true;
+ try{
+  const m=await getMeta();let raw;
+  try{raw=await unseal(await kdf(normRec($('f-rec').value),sun(m.s2)),m.rc)}
+  catch(x){e.textContent='Wrong recovery key.';$('f-go').disabled=false;return}
+  const s1=rnd(16);
+  await setMeta({...m,s1:sb(s1),pw:await seal(await kdf(p,s1),raw)});
+  dek=await dekKey(raw);['f-rec','f-pw','f-pw2'].forEach(i=>$(i).value='');enterVault();
+ }catch(x){e.textContent='Could not reset. Please try again.'}
+ $('f-go').disabled=false;
+};
 
-    <!-- TAB 2: RECENTLY DELETED (TRASH) -->
-    <div id="viewTrash" style="display:none;">
-      <div class="gallery-grid" id="trashContainer"></div>
-    </div>
-
-    <!-- TAB 3: SEPARATE SETTINGS PAGE -->
-    <div id="viewSettings" class="settings-panel">
-      <!-- Storage Usage Info -->
-      <div class="settings-group">
-        <div class="settings-title">📊 Storage Details</div>
-        <div class="storage-stat-row">
-          <span>Used Storage (Bhara hua):</span>
-          <strong id="settingUsedText" style="color: #38bdf8;">0.00 MB</strong>
-        </div>
-        <div class="storage-stat-row">
-          <span>Free Storage (Khali hai):</span>
-          <strong id="settingFreeText" style="color: #34d399;">50.00 MB</strong>
-        </div>
-        <div class="storage-stat-row">
-          <span>Total Space Allocation:</span>
-          <span>50.00 MB</span>
-        </div>
-        <div class="storage-stat-row">
-          <span>Total Saved Media:</span>
-          <span id="settingMediaCount">0 Items</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="settingProgressBar"></div>
-        </div>
-      </div>
-
-      <!-- Change Password Settings -->
-      <div class="settings-group">
-        <div class="settings-title">🔑 Change Password</div>
-        <div class="input-group">
-          <input type="password" id="settingOldPass" placeholder="Current Password">
-          <span class="eye-toggle" id="eye_settingOldPass" onclick="toggleInputVisibility('settingOldPass', 'eye_settingOldPass')">👁️</span>
-        </div>
-        <div class="input-group">
-          <input type="password" id="settingNewPass" placeholder="New Password">
-          <span class="eye-toggle" id="eye_settingNewPass" onclick="toggleInputVisibility('settingNewPass', 'eye_settingNewPass')">👁️</span>
-        </div>
-        <div class="input-group">
-          <input type="password" id="settingConfirmPass" placeholder="Confirm New Password">
-          <span class="eye-toggle" id="eye_settingConfirmPass" onclick="toggleInputVisibility('settingConfirmPass', 'eye_settingConfirmPass')">👁️</span>
-        </div>
-        <button type="button" onclick="saveNewPasswordSettings()">Update Password</button>
-        <p id="settingPassMsg" class="msg-box"></p>
-      </div>
-
-      <!-- Google Drive Backup & Sync -->
-      <div class="settings-group">
-        <div class="settings-title">☁️ Backup & Google Drive Sync</div>
-        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Backups are automatically password-locked with your current website password.</p>
-        <div style="display: flex; gap: 8px;">
-          <button type="button" class="btn-secondary" style="flex:1;" onclick="exportPasswordProtectedBackup()">🔒 Save Backup File</button>
-          <button type="button" class="btn-secondary" style="flex:1;" onclick="document.getElementById('importFile').click()">📤 Restore Backup</button>
-          <input type="file" id="importFile" accept=".vault,.json" style="display:none;" onchange="importPasswordProtectedBackup(event)">
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    const MASTER_RECOVERY_KEY = "MADHAV-RESET";
-    const MAX_STORAGE_MB = 50;
-
-    let currentPassword = localStorage.getItem("madhav_user_pass") || "1234";
-    let myMedia = JSON.parse(localStorage.getItem("madhav_media_vault") || "[]");
-    let trashMedia = JSON.parse(localStorage.getItem("madhav_media_trash") || "[]");
-    let activeTab = "vault";
-    let isVaultUnlocked = false;
-
-    // Fixed Robust Eye Toggle
-    function toggleInputVisibility(inputId, iconId) {
-      const field = document.getElementById(inputId);
-      const icon = document.getElementById(iconId);
-      if (!field) return;
-
-      if (field.type === "password") {
-        field.type = "text";
-        if (icon) icon.innerText = "🙈";
-      } else {
-        field.type = "password";
-        if (icon) icon.innerText = "👁️";
-      }
-    }
-
-    // Auto-Lock on App Minimize
-    document.addEventListener("visibilitychange", function() {
-      if (document.hidden && isVaultUnlocked) {
-        lockStudio();
-      }
-    });
-
-    // Form Login Trigger
-    function handleFormLogin(e) {
-      if (e) e.preventDefault();
-      unlockStudio();
-    }
-
-    // Login Unlock Function
-    function unlockStudio() {
-      const passField = document.getElementById("passInput");
-      const err = document.getElementById("loginError");
-      if (!passField) return;
-
-      const val = passField.value.trim();
-
-      if (val === currentPassword) {
-        if (err) err.style.display = "none";
-        document.getElementById("loginBox").style.display = "none";
-        
-        // 10s Animation Trigger
-        const anim = document.getElementById("welcomeOverlay");
-        const countdownLabel = document.getElementById("animCountdown");
-        anim.style.display = "flex";
-        
-        let secondsLeft = 10;
-        countdownLabel.innerText = "Decentralized Decryption... " + secondsLeft + "s";
-        
-        const timerInterval = setInterval(() => {
-          secondsLeft--;
-          if (secondsLeft > 0) {
-            countdownLabel.innerText = "Decentralized Decryption... " + secondsLeft + "s";
-          } else {
-            countdownLabel.innerText = "Access Granted. Welcome Madhav!";
-            clearInterval(timerInterval);
-          }
-        }, 1000);
-
-        setTimeout(() => {
-          anim.style.display = "none";
-          document.getElementById("vaultView").style.display = "block";
-          isVaultUnlocked = true;
-          switchMainTab("vault");
-          refreshAllData();
-        }, 10000);
-
-      } else {
-        if (err) {
-          err.innerText = "Incorrect Password! Please try again.";
-          err.style.display = "block";
-        }
-      }
-    }
-
-    function lockStudio() {
-      document.getElementById("vaultView").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      const passField = document.getElementById("passInput");
-      if (passField) passField.value = "";
-      isVaultUnlocked = false;
-    }
-
-    // Tab Navigation
-    function switchMainTab(tab) {
-      activeTab = tab;
-      document.getElementById("tabVault").className = tab === "vault" ? "tab-btn active" : "tab-btn";
-      document.getElementById("tabTrash").className = tab === "trash" ? "tab-btn active" : "tab-btn";
-      document.getElementById("tabSettings").className = tab === "settings" ? "tab-btn active" : "tab-btn";
-
-      document.getElementById("viewVault").style.display = tab === "vault" ? "block" : "none";
-      document.getElementById("viewTrash").style.display = tab === "trash" ? "block" : "none";
-      document.getElementById("viewSettings").style.display = tab === "settings" ? "block" : "none";
-
-      const sub = document.getElementById("headerSubtitle");
-      if (tab === "vault") sub.innerText = `${myMedia.length} Active Photos & Videos`;
-      if (tab === "trash") sub.innerText = `${trashMedia.length} In Trash`;
-      if (tab === "settings") sub.innerText = `Studio Configuration`;
-
-      refreshAllData();
-    }
-
-    // Storage Calculation
-    function calculateStorageDetails() {
-      try {
-        const fullPayload = JSON.stringify(myMedia) + JSON.stringify(trashMedia);
-        const usedBytes = new Blob([fullPayload]).size;
-        const usedMB = (usedBytes / (1024 * 1024)).toFixed(2);
-        const freeMB = Math.max(0, (MAX_STORAGE_MB - usedMB)).toFixed(2);
-        const percent = Math.min(100, ((usedMB / MAX_STORAGE_MB) * 100)).toFixed(1);
-
-        document.getElementById("settingUsedText").innerText = `${usedMB} MB (${percent}%)`;
-        document.getElementById("settingFreeText").innerText = `${freeMB} MB`;
-        document.getElementById("settingMediaCount").innerText = `${myMedia.length + trashMedia.length} Items`;
-        document.getElementById("settingProgressBar").style.width = percent + "%";
-        document.getElementById("trashCountBadge").innerText = trashMedia.length;
-      } catch(e) {
-        console.error("Storage Calculation Error:", e);
-      }
-    }
-
-    // Media Upload
-    function handleMediaUpload() {
-      const input = document.getElementById("mediaChooser");
-      const status = document.getElementById("uploadStatus");
-      const file = input.files[0];
-      if (!file) return;
-
-      const isVideo = file.type.startsWith("video");
-      status.innerText = isVideo ? "Encoding video..." : "Saving photo...";
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        myMedia.unshift({
-          id: Date.now(),
-          type: isVideo ? "video" : "image",
-          src: e.target.result,
-          name: file.name || (isVideo ? "video.mp4" : "photo.jpg")
-        });
-        localStorage.setItem("madhav_media_vault", JSON.stringify(myMedia));
-        r
+/* Vault */
+let tab='media',picking=false,busy=false,bkFile=null;
+const msg=(id,t,ok)=>{const e=$(id);e.style.color=ok?'var(--ok)':'var(--er)';e.textContent=t};
+function resetTimer(){clearTimeout(timer);if(dek)timer=setTimeout(lock,300000)}
+['click','keydown','touchstart','mousemove'].forEach(ev=>document.addEventListener(ev,resetTimer,{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&dek&&!picking&&!busy)lock()});
+function lock(){
+ dek=null;index=[];clearTimeout(timer);urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+ $('grid').innerHTML='';$('tgrid').innerHTML='';$('lb').click();endWelcome();show('login');
+}
+$('lock').onclick=lock;
+function openLB(u){$('lb-img').src=u;$('lb').classList.remove('hide')}
+$('lb').onclick=()=>{$('lb').classList.add('hide');$('lb-img').removeAttribute('src')};
+const mb=n=>(n/1048576).toFixed(1)+' MB';
+function setTab(t){tab=t;['media','trash','set'].forEach(x=>{$('p-'+x).classList.toggle('hide',x!==t);$('t-'+x).classList.toggle('on',x===t)});if(t==='set')info()}
+['media','trash','set'].forEach(x=>$('t-'+x).onclick=()=>setTab(x));
+async function info(){
+ const t=index.reduce((a,f)=>a+f.size,0),q=1073741824,p=t/q*100;
+ $('s-used').textContent=mb(t)+' ('+p.toFixed(2)+'%)';
+ $('s-free').textContent=mb(Math.max(0,q-t));
+ $('s-bar').style.width=Math.min(100,p)+'%';$('s-vid').textContent=vid;
+}
+async function enterVault(){welcome();show('vault');setTab('media');resetTimer();$('grid').textContent='Loading…';try{await loadIndex()}catch(x){$('u-err').textContent='Could not load your files list.'}renderGrid()}
+async function fetchFile(f){
+ const parts=[];
+ for(let i=0;i<f.n;i++){const b=await get('b/'+f.id+'/'+i);if(!b)throw 0;parts.push(new Uint8Array(await decChunk(b)))}
+ return new Blob(parts,{type:f.type});
+}
+function btn(t,c,fn){const b=document.createElement('button');b.textContent=t;if(c)b.className=c;b.onclick=fn;return b}
+function tile(f,trash){
+ const d=document.createElement('div');d.className='item';const box=document.createElement('div');d.append(box);
+ const isV=f.type.startsWith('video');
+ const load=async()=>{
+  box.textContent='Opening…';box.style.cssText='height:180px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px';
+  try{const url=URL.createObjectURL(await fetchFile(f));urls.push(url);
+   const media=document.createElement(isV?'video':'img');media.src=url;
+   if(isV){media.controls=true;media.playsInline=true}else{media.alt=f.name;media.style.cursor='zoom-in';media.onclick=()=>openLB(url)}
+   box.style.cssText='';box.replaceChildren(media)}catch(x){box.textContent='Could not load file'}
+ };
+ if(trash){box.style.cssText='height:110px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:13px';box.textContent=(isV?'🎬 ':'🖼️ ')+mb(f.size)}
+ else if(isV){box.style.cssText='height:180px;display:flex;align-items:center;justify-content:center';box.append(btn('▶ Play ('+mb(f.size)+')','',load))}
+ else load();
+ const m=document.createElement('div');m.className='m';
+ const n=document.createElement('span');n.textContent=f.name;m.append(n);
+ if(trash){
+  m.append(btn('↩️ Restore','dl',async()=>{delete f.del;await saveIndex();renderGrid()}),
+  btn('✕','',async()=>{if(!confirm('Delete permanently? This cannot be undone.'))return;
+   try{index=index.filter(x=>x.id!==f.id);await saveIndex();for(let i=0;i<f.n;i++)await del('b/'+f.id+'/'+i)}catch(x){$('u-err').textContent='Could not delete the file.'}
+   renderGrid()}));
+ }else{
+  m.append(btn('⬇️','dl',async()=>{try{const u=URL.createObjectURL(await fetchFile(f)),a=document.createElement('a');a.href=u;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),60000)}catch(x){$('u-err').textContent='Could not download the file.'}}),
+  btn('🗑️','',async()=>{f.del=Date.now();await saveIndex();renderGrid()}));
+ }
+ d.append(m);return d;
+}
+function renderGrid(){bkFile=null;if($('bk-dr'))$('bk-dr').textContent='☁️ Save backup to Google Drive';
+ const g=$('grid'),tg=$('tgrid');g.innerHTML='';tg.innerHTML='';urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+ const act=index.filter(f=>!f.del),tr=index.filter(f=>f.del);
+ $('empty').classList.toggle('hide',act.length>0);$('tempty').classList.toggle('hide',tr.length>0);$('tb').textContent=tr.length;
+ $('meter').textContent='Vault size: '+mb(index.reduce((a,f)=>a+f.size,0))+' · '+act.length+' files';
+ act.forEach(f=>g.append(tile(f,false)));tr.forEach(f=>tg.append(tile(f,true)));
+ if(tab==='set')info();
+}
+const CH=3*1048576;
+$('up-l').onclick=()=>{picking=true;setTimeout(()=>picking=false,120000)};
+$('up').addEventListener('cancel',()=>{picking=false});
+$('up').onchange=async e=>{
+ picking=false;busy=true;const err=$('u-err');err.style.color='var(--mut)';let bad=false;
+ for(const file of e.target.files){
+  if(!/^(image|video)\//.test(file.type))continue;
+  const id=crypto.randomUUID(),n=Math.max(1,Math.ceil(file.size/CH));let done=0;
+  try{
+   for(let i=0;i<n;i++){
+    err.textContent='Saving '+file.name+' — part '+(i+1)+' of '+n+'. Please keep this page open.';
+    const buf=await file.slice(i*CH,(i+1)*CH).arrayBuffer();
+    await put('b/'+id+'/'+i,await encChunk(buf));done++;
+   }
+   index.unshift({id,name:file.name,type:file.type,size:file.size,ts:Date.now(),n});
+   await saveIndex();
+  }catch(x){
+   bad=true;err.style.color='var(--er)';err.textContent='"'+file.name+'" could not be saved. Check your internet connection and the 1 GB free storage limit. ('+(x&&x.message||x)+')';
+   for(let i=0;i<done;i++)await del('b/'+id+'/'+i);
+  }
+ }
+ busy=false;if(!bad)err.textContent='';
+ e.target.value='';renderGrid();
+};
+$('pc-go').onclick=async()=>{
+ const c=$('pc-cur').value,n=$('pc-new').value,n2=$('pc-new2').value;
+ if(!c||!n||!n2){msg('pc-msg','Fill in all three fields.',0);return}
+ if(n.length<8){msg('pc-msg','New password must be at least 8 characters.',0);return}
+ if(n!==n2){msg('pc-msg','New passwords do not match.',0);return}
+ if(n===c){msg('pc-msg','New password must be different.',0);return}
+ $('pc-go').disabled=true;
+ try{
+  const m=await getMeta();let raw;
+  try{raw=await unseal(await kdf(c,sun(m.s1)),m.pw)}catch(x){msg('pc-msg','Current password is wrong.',0);$('pc-go').disabled=false;return}
+  const s1=rnd(16);await setMeta({...m,s1:sb(s1),pw:await seal(await kdf(n,s1),raw)});
+  ['pc-cur','pc-new','pc-new2'].forEach(i=>$(i).value='');msg('pc-msg','Password updated.',1);
+ }catch(x){msg('pc-msg','Could not update the password.',0)}
+ $('pc-go').disabled=false;
+};
+function save(f){const u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download=f.name;a.click();setTimeout(()=>URL.revokeObjectURL(u),60000)}
+async function makeBackup(){
+ const keys=['meta','index'];index.forEach(f=>{for(let i=0;i<f.n;i++)keys.push('b/'+f.id+'/'+i)});
+ const parts=[enc.encode('MVAULT1\n')];let d=0;
+ for(const k of keys){msg('bk-msg','Preparing backup… '+Math.round(d++/keys.length*100)+'%',1);const v=await get(k);if(!v)continue;parts.push(enc.encode(JSON.stringify({k,n:v.length})+'\n'),v)}
+ return new File(parts,'private-studio-'+new Date().toISOString().slice(0,10)+'.vault',{type:'application/octet-stream'});
+}
+$('bk-ex').onclick=async()=>{busy=true;try{save(await makeBackup());msg('bk-msg','Backup file downloaded. It stays encrypted.',1)}catch(x){msg('bk-msg','Backup failed. Check your internet connection.',0)}busy=false};
+$('bk-dr').onclick=async()=>{
+ busy=true;
+ try{
+  if(!bkFile){bkFile=await makeBackup();$('bk-dr').textContent='✅ Backup ready: tap again to save to Google Drive';msg('bk-msg','Backup is ready. Tap the button again and choose Google Drive.',1);busy=false;return}
+  const f=bkFile;bkFile=null;$('bk-dr').textContent='☁️ Save backup to Google Drive';
+  if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Private Studio backup'});msg('bk-msg','Choose Google Drive in the share sheet.',1)}
+  else{save(f);msg('bk-msg','Sharing is not available in this browser, so the backup was downloaded. Upload it to Google Drive from your Files app.',1)}
+ }catch(x){msg('bk-msg',x&&x.name==='AbortError'?'Cancelled.':'Backup failed. Try the download button.',0)}
+ busy=false;
+};
+$('bk-file').onchange=async e=>{
+ const f=e.target.files[0];e.target.value='';if(!f)return;
+ const pw=$('bk-pw').value;if(!pw){msg('bk-msg','Enter the password of the vault this backup came from.',0);return}
+ busy=true;
+ try{
+  const buf=new Uint8Array(await f.arrayBuffer());
+  if(dec.decode(buf.subarray(0,8))!=='MVAULT1\n')throw 0;
+  let pos=8;const ent=[];
+  while(pos<buf.length){let j=pos;while(j<buf.length&&buf[j]!==10)j++;if(j>=buf.length)throw 0;const h=JSON.parse(dec.decode(buf.subarray(pos,j)));pos=j+1;ent.push([h.k,buf.slice(pos,pos+h.n)]);pos+=h.n}
+  const mi=ent.find(x=>x[0]==='meta');if(!mi)throw 0;
+  const m=JSON.parse(dec.decode(mi[1]));
+  try{await unseal(await kdf(pw,sun(m.s1)),m.pw)}catch(x){msg('bk-msg','Wrong password for this backup.',0);busy=false;return}
+  if(!confirm('This replaces everything in this vault with the backup. Continue?')){busy=false;return}
+  const keep=new Set(ent.map(x=>x[0]));let d=0;
+  for(const [k,v] of ent){msg('bk-msg','Restoring… '+Math.round(d++/ent.length*100)+'%',1);await put(k,v)}
+  for(const o of index)for(let i=0;i<o.n;i++){const k='b/'+o.id+'/'+i;if(!keep.has(k))await del(k)}
+  busy=false;$('bk-pw').value='';lock();
+  $('l-err').style.color='var(--ok)';$('l-err').textContent='Backup restored. Unlock with the backup password.';
+  return;
+ }catch(x){msg('bk-msg','This is not a valid backup file, or the cloud could not be reached.',0)}
+ busy=false;
+};
+const mylink=()=>location.href.split('#')[0]+'#v='+vid;
+$('s-cl').onclick=async()=>{try{await navigator.clipboard.writeText(mylink());$('s-cl').textContent='Copied ✓'}catch(x){$('s-cl').textContent='Copy failed'}};
+$('s-cv').onclick=async()=>{try{await navigator.clipboard.writeText(vid);$('s-cv').textContent='Copied ✓'}catch(x){$('s-cv').textContent='Select and copy the ID below'}};
+document.querySelectorAll('input[type=password]').forEach(i=>{const w=document.createElement('div');w.className='pw';i.before(w);w.append(i);const b=document.createElement('button');b.type='button';b.className='eye';b.textContent='Show';b.onclick=()=>{const t=i.type==='password';i.type=t?'text':'password';b.textContent=t?'Hide':'Show'};w.append(b)});
+function endWelcome(){const w=$('welcome');clearTimeout(endWelcome.t);clearInterval(endWelcome.i);w.classList.add('out');setTimeout(()=>w.classList.add('hide'),700)}
+function welcome(){
+ const w=$('welcome'),h=$('w-h');h.innerHTML='';let n=0,t=10;
+ ['MADHAV','KADAM'].forEach((word,li)=>{const d=document.createElement('span');d.className='wl wl'+(li+1);[...word].forEach(ch=>{const c=document.createElement('span');c.className='c';c.textContent=ch;c.style.animationDelay=(0.6+n*0.09)+'s';n++;d.append(c)});h.append(d)});
+ $('w-sub').textContent='Decrypting your vault… 10s';
+ w.className='';clearTimeout(endWelcome.t);clearInterval(endWelcome.i);
+ endWelcome.i=setInterval(()=>{t--;$('w-sub').textContent=t>0?'Decrypting your vault… '+t+'s':'Vault unlocked'},1000);
+ endWelcome.t=setTimeout(endWelcome,10000);
+}
+/* Start */
+(async()=>{
+ if(!window.crypto||!crypto.subtle){document.querySelector('.wrap').innerHTML='<div class="box"><h1>⚠️ Not supported</h1><p>Please open this page over https in a recent browser.</p></div>';return}
+ let h=null;try{const m=location.hash.match(/#v=([a-z0-9]{20,})/i);if(m)h=m[1].toLowerCase()}catch(x){}
+ if(h){
+  vid=h;try{localStorage.setItem('mpd_vid',vid)}catch(x){}
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(x){}
+  try{if(!(await getMeta())){vid=null;try{localStorage.removeItem('mpd_vid')}catch(x){}$('c-err').textContent='No vault found for this link.';show('conn');return}}catch(x){}
+ }else{try{vid=localStorage.getItem('mpd_vid')}catch(x){}}
+ if(!vid){show('conn');return}
+ route();
+})();
+</script>
+</body>
+</html>
